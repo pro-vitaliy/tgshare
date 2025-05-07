@@ -1,0 +1,10 @@
+telegram:
+  bot:
+    token: ${TELEGRAM_BOT_TOKEN}
+
+logging:
+  level:
+    root: INFO
+    com.github.provitaliy: DEBUG
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
