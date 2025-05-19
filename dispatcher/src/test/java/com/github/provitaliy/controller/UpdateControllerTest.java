@@ -18,7 +18,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class UpdateControllerTest {
+class UpdateControllerTest {
 
     @Mock
     private MessageUtils messageUtils;
