@@ -19,7 +19,8 @@
 
     <modules>
         <module>dispatcher</module>
-    </modules>
+		<module>node</module>
+	</modules>
 
 	<properties>
 		<java.version>24</java.version>
