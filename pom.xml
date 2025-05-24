@@ -20,7 +20,8 @@
     <modules>
         <module>dispatcher</module>
 		<module>node</module>
-	</modules>
+        <module>common</module>
+    </modules>
 
 	<properties>
 		<java.version>24</java.version>
