@@ -3,9 +3,9 @@ server:
 
 spring:
   rabbitmq:
-    host: "localhost"
+    host: localhost
     port: 5672
-    username: "admin"
+    username: admin
     password: "0238"
     queues:
       text-message-update: "rabbit.text.message.update.queue"
@@ -14,7 +14,7 @@ spring:
       answer-message: "rabbit.answer.message.queue"
   datasource:
     url: "jdbc:postgresql://localhost:5432/tgsharedb"
-    user: "admin"
+    username: admin
     password: "0238"
   jpa:
     generate-ddl: true
