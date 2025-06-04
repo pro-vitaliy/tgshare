@@ -19,6 +19,13 @@ spring:
   jpa:
     generate-ddl: true
 
+telegram:
+  bot:
+    token: ${TELEGRAM_BOT_TOKEN}
+  endpoints:
+    file-info: "https://api.telegram.org/bot{token}/getFile?file_id={fileId}"
+    file-storage: "https://api.telegram.org/file/bot{token}/{filePath}"
+
 logging:
   level:
     root: INFO
