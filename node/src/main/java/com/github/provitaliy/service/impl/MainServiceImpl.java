@@ -2,8 +2,11 @@ package com.github.provitaliy.service.impl;
 
 import com.github.provitaliy.dao.RawDataDAO;
 import com.github.provitaliy.dao.UserAppDAO;
+import com.github.provitaliy.entity.AppDocument;
 import com.github.provitaliy.entity.AppUser;
 import com.github.provitaliy.entity.RawData;
+import com.github.provitaliy.exception.UploadFileException;
+import com.github.provitaliy.service.FileService;
 import com.github.provitaliy.service.MainService;
 import com.github.provitaliy.service.ProducerService;
 import com.github.provitaliy.service.enums.ServiceCommands;
@@ -20,13 +23,14 @@ import static com.github.provitaliy.entity.enums.UserState.BASIC_STATE;
 import static com.github.provitaliy.entity.enums.UserState.WAIT_FOR_EMAIL_STATE;
 import static com.github.provitaliy.service.enums.ServiceCommands.CANCEL;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class MainServiceImpl implements MainService {
     private final RawDataDAO rawDataDAO;
     private final ProducerService producerService;
     private final UserAppDAO userAppDAO;
+    private final FileService fileService;
 
     @Override
     public void processTextMessage(Update update) {
@@ -74,9 +78,16 @@ public class MainServiceImpl implements MainService {
             return;
         }
 
-        //TODO: add doc saving
-        var answer = "Документ успешно загружен. Ссылка для скачивания http://test.io/get-doc/666";
-        sendAnswer(answer, chatId);
+        try {
+            AppDocument appDocument = fileService.processDoc(update.getMessage());
+            //TODO add link generation
+            var answer = "Документ успешно загружен. Ссылка для скачивания http://test.io/get-doc/666";
+            sendAnswer(answer, chatId);
+        } catch (UploadFileException e) {
+            log.error(e.getMessage());
+            var answer = "Загрузка файла не удалась. Повторите попытку позже.";
+            sendAnswer(answer, chatId);
+        }
     }
 
     @Override
