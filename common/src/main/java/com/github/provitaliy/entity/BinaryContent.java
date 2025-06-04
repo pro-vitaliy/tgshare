@@ -5,8 +5,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,7 +13,6 @@ import lombok.Setter;
 @Table(name = "binary_content")
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 public class BinaryContent {
 
@@ -24,4 +21,8 @@ public class BinaryContent {
     private Long id;
 
     private byte[] fileAsArrayOfBytes;
+
+    public BinaryContent(byte[] fileAsArrayOfBytes) {
+        this.fileAsArrayOfBytes = fileAsArrayOfBytes;
+    }
 }
