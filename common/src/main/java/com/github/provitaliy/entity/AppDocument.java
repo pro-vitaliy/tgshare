@@ -25,7 +25,7 @@ public class AppDocument {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String telegramField;
+    private String telegramFileId;
     private String docName;
 
     @OneToOne
