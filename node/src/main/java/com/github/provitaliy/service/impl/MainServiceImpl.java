@@ -3,6 +3,7 @@ package com.github.provitaliy.service.impl;
 import com.github.provitaliy.dao.RawDataDAO;
 import com.github.provitaliy.dao.UserAppDAO;
 import com.github.provitaliy.entity.AppDocument;
+import com.github.provitaliy.entity.AppPhoto;
 import com.github.provitaliy.entity.AppUser;
 import com.github.provitaliy.entity.RawData;
 import com.github.provitaliy.exception.UploadFileException;
@@ -100,9 +101,16 @@ public class MainServiceImpl implements MainService {
             return;
         }
 
-        //TODO: add photo saving
-        var answer = "Photo успешно загружен. Ссылка для скачивания http://test.io/get-photo/666";
-        sendAnswer(answer, chatId);
+        try {
+            AppPhoto appPhoto = fileService.processPhoto(update.getMessage());
+            //TODO: add link generation
+            var answer = "Photo успешно загружен. Ссылка для скачивания http://test.io/get-photo/666";
+            sendAnswer(answer, chatId);
+        } catch (UploadFileException e) {
+            log.error(e.getMessage());
+            var answer = "Загрузка файла не удалась. Повторите попытку позже.";
+            sendAnswer(answer, chatId);
+        }
     }
 
     private boolean isNotAllowToSendContent(Long chatId, AppUser appUser) {
