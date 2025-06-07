@@ -1,0 +1,11 @@
+server:
+  port: 8086
+
+spring:
+  datasource:
+    url: "jdbc:postgresql://localhost:5432/tgsharedb"
+    username: admin
+    password: "0238"
+  jpa:
+    hibernate:
+      ddl-auto: create-drop

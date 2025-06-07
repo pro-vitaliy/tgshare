@@ -21,6 +21,7 @@
         <module>dispatcher</module>
 		<module>node</module>
         <module>common</module>
+        <module>rest-service</module>
     </modules>
 
 	<properties>
