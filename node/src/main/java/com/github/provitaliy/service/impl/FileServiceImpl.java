@@ -40,7 +40,7 @@ public class FileServiceImpl implements FileService {
     @Override
     public AppPhoto processPhoto(Message telegramMessage) {
         //TODO пока обрабоатываем только одно фото
-        PhotoSize tgPhoto = telegramMessage.getPhoto().getFirst();
+        PhotoSize tgPhoto = telegramMessage.getPhoto().getLast();
         byte[] fileInBytes = telegramService.downloadFileById(tgPhoto.getFileId());
         var binaryContent = binaryContentDAO.save(new BinaryContent(fileInBytes));
         var appPhoto = AppPhoto.builder()
