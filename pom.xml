@@ -22,6 +22,7 @@
 		<module>node</module>
         <module>common</module>
         <module>rest-service</module>
+        <module>mail-service</module>
     </modules>
 
 	<properties>
