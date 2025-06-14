@@ -6,5 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface UserAppDAO extends JpaRepository<AppUser, Long> {
-    Optional<AppUser> findAppUserByTelegramUserId(Long id);
+    Optional<AppUser> findByTelegramUserId(Long id);
+    Optional<AppUser> findByEmail(String email);
 }
