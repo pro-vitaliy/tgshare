@@ -5,6 +5,7 @@ import com.github.provitaliy.service.MailSenderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.MailSendException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,9 @@ public class MailSenderServiceImpl implements MailSenderService {
     @Value("${service.activation.uri}")
     private String serviceActivationUri;
 
+    @Value("${spring.mail.username}")
+    private String mailFrom;
+
     @Override
     public void send(MailParams mailParams) {
         String id = mailParams.getId();
@@ -29,11 +33,29 @@ public class MailSenderServiceImpl implements MailSenderService {
         }
 
         SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setFrom(mailFrom);
         mailMessage.setTo(mailTo);
         mailMessage.setSubject("Активация учетной записи");
         mailMessage.setText(getActivationMessageBody(id));
 
-        mailSender.send(mailMessage);
+        try {
+            log.info("""
+                    Отправка письма:
+                    → To: {}
+                    → From: {}
+                    → Subject: {}
+                    """, mailTo, mailFrom, mailMessage.getSubject());
+
+            mailSender.send(mailMessage);
+
+        } catch (MailSendException e) {
+            log.error("""
+                    Не удалось отправить письмо:
+                    → To: {}
+                    → From: {}
+                    → Причина: {}
+                    """, mailTo, mailFrom, e.getMessage());
+        }
     }
 
     private String getActivationMessageBody(String id) {
