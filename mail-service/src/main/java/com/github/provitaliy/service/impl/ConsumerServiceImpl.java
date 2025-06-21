@@ -13,7 +13,7 @@ public class ConsumerServiceImpl implements ConsumerService {
     private final MailSenderService mailSenderService;
 
     @Override
-    @RabbitListener(queues = "${rabbit.registration.mail.queue}")
+    @RabbitListener(queues = "${spring.rabbitmq.queues.registration-mail}")
     public void consumeRegistrationMail(MailParams mailParams) {
         mailSenderService.send(mailParams);
     }
