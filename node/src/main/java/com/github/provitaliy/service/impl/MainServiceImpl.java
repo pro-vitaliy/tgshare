@@ -7,6 +7,7 @@ import com.github.provitaliy.entity.AppPhoto;
 import com.github.provitaliy.entity.AppUser;
 import com.github.provitaliy.entity.RawData;
 import com.github.provitaliy.exception.UploadFileException;
+import com.github.provitaliy.service.AppUserService;
 import com.github.provitaliy.service.FileService;
 import com.github.provitaliy.service.MainService;
 import com.github.provitaliy.service.ProducerService;
@@ -32,6 +33,7 @@ public class MainServiceImpl implements MainService {
     private final ProducerService producerService;
     private final UserAppDAO userAppDAO;
     private final FileService fileService;
+    private final AppUserService appUserService;
 
     @Override
     public void processTextMessage(Update update) {
@@ -49,7 +51,8 @@ public class MainServiceImpl implements MainService {
         } else if (BASIC_STATE.equals(userState)) {
             output = processServiceCommand(appUser, text);
         } else if (WAIT_FOR_EMAIL_STATE.equals(userState)) {
-            //TODO: add email process
+            var email = text.trim().toLowerCase();
+            output = appUserService.setEmail(appUser, email);
         } else {
             log.error("Unknown user state: {}", userState);
             output = "Неизвестная ошибка. Введите /cancel и попробуйте снова";
@@ -62,7 +65,7 @@ public class MainServiceImpl implements MainService {
         ServiceCommands command = ServiceCommands.fromValue(text);
 
         return switch (command) {
-            case REGISTRATION -> "Регистрация в разработке."; //TODO: добавить регистрацию
+            case REGISTRATION -> appUserService.registerUser(appUser);
             case HELP -> help();
             case START -> "Приветствую! Чтобы посмотреть список доступных команд введите /help";
             case null, default -> "Неизвестная команда! Чтобы посмотреть список доступных команд введите /help";
@@ -158,8 +161,7 @@ public class MainServiceImpl implements MainService {
                     .username(telegramUser.getUserName())
                     .firstName(telegramUser.getFirstName())
                     .lastName(telegramUser.getLastName())
-                    //TODO: изменить значение по умолчанию после добавления регистрации
-                    .isActive(true)
+                    .isActive(false)
                     .userState(BASIC_STATE)
                     .build();
             return userAppDAO.save(transientAppUser);
