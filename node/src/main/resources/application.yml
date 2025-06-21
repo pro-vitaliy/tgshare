@@ -12,6 +12,7 @@ spring:
       doc-message-update: "rabbit.doc.message.update.queue"
       photo-message-update: "rabbit.photo.message.update.queue"
       answer-message: "rabbit.answer.message.queue"
+      registration-mail: "rabbit.registration.mail.queue"
   datasource:
     url: "jdbc:postgresql://localhost:5432/tgsharedb"
     username: admin
@@ -33,3 +34,5 @@ logging:
     com.github.provitaliy: DEBUG
   pattern:
     console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+salt: ${SALT:test}
