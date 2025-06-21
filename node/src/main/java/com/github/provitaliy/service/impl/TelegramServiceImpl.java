@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
-@Service
 @Slf4j
+@Service
 public class TelegramServiceImpl implements TelegramService {
     private final String token;
     private final String fileInfoUri;
