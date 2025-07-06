@@ -4,13 +4,14 @@ server:
 telegram:
   bot:
     token: ${TELEGRAM_BOT_TOKEN}
+    uri: ${TELEGRAM_BOT_URI}
 
 spring:
   rabbitmq:
     host: "localhost"
     port: 5672
     username: "admin"
-    password: "0238"
+    password: ${RABBIT_PASSWORD}
     queues:
       text-message-update: rabbit.text.message.update.queue
       doc-message-update: rabbit.doc.message.update.queue
