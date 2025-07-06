@@ -14,7 +14,7 @@
     <properties>
         <maven.compiler.source>24</maven.compiler.source>
         <maven.compiler.target>24</maven.compiler.target>
-        <telegrambots.starter.version>8.3.0</telegrambots.starter.version>
+        <telegrambots.starter.version>9.0.0</telegrambots.starter.version>
     </properties>
 
     <dependencies>
@@ -26,12 +26,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.telegram</groupId>
-            <artifactId>telegrambots-springboot-longpolling-starter</artifactId>
-            <version>${telegrambots.starter.version}</version>
         </dependency>
 
         <dependency>
