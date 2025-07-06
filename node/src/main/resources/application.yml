@@ -28,6 +28,9 @@ telegram:
     file-info: "https://api.telegram.org/bot{token}/getFile?file_id={fileId}"
     file-storage: "https://api.telegram.org/file/bot{token}/{filePath}"
 
+files:
+  link: "${REST_SERVICE_URI:http://localhost:8086}"
+
 logging:
   level:
     root: INFO
