@@ -11,6 +11,7 @@ import com.github.provitaliy.service.AppUserService;
 import com.github.provitaliy.service.FileService;
 import com.github.provitaliy.service.MainService;
 import com.github.provitaliy.service.ProducerService;
+import com.github.provitaliy.service.enums.LinkType;
 import com.github.provitaliy.service.enums.ServiceCommands;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -84,8 +85,8 @@ public class MainServiceImpl implements MainService {
 
         try {
             AppDocument appDocument = fileService.processDoc(update.getMessage());
-            //TODO add link generation
-            var answer = "Документ успешно загружен. Ссылка для скачивания http://test.io/get-doc/666";
+            String link = fileService.generateLink(appDocument.getId(), LinkType.GET_DOC);
+            var answer = "Документ успешно загружен. Ссылка для скачивания: " + link;
             sendAnswer(answer, chatId);
         } catch (UploadFileException e) {
             log.error(e.getMessage());
@@ -106,8 +107,8 @@ public class MainServiceImpl implements MainService {
 
         try {
             AppPhoto appPhoto = fileService.processPhoto(update.getMessage());
-            //TODO: add link generation
-            var answer = "Photo успешно загружен. Ссылка для скачивания http://test.io/get-photo/666";
+            String link = fileService.generateLink(appPhoto.getId(), LinkType.GET_PHOTO);
+            var answer = "Photo успешно загружен. Ссылка для скачивания: " + link;
             sendAnswer(answer, chatId);
         } catch (UploadFileException e) {
             log.error(e.getMessage());
