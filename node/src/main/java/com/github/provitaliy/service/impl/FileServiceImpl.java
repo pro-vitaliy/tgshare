@@ -8,7 +8,10 @@ import com.github.provitaliy.entity.AppPhoto;
 import com.github.provitaliy.entity.BinaryContent;
 import com.github.provitaliy.service.FileService;
 import com.github.provitaliy.service.TelegramService;
+import com.github.provitaliy.service.enums.LinkType;
 import lombok.RequiredArgsConstructor;
+import org.hashids.Hashids;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
@@ -20,6 +23,10 @@ public class FileServiceImpl implements FileService {
     private final AppPhotoDAO appPhotoDAO;
     private final BinaryContentDAO binaryContentDAO;
     private final TelegramService telegramService;
+    private final Hashids hashids;
+
+    @Value("${files.link}")
+    private String linkAddress;
 
     @Override
     public AppDocument processDoc(Message telegramMessage) {
@@ -39,7 +46,6 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public AppPhoto processPhoto(Message telegramMessage) {
-        //TODO пока обрабоатываем только одно фото
         PhotoSize tgPhoto = telegramMessage.getPhoto().getLast();
         byte[] fileInBytes = telegramService.downloadFileById(tgPhoto.getFileId());
         var binaryContent = binaryContentDAO.save(new BinaryContent(fileInBytes));
@@ -49,5 +55,11 @@ public class FileServiceImpl implements FileService {
                 .fileSize(tgPhoto.getFileSize())
                 .build();
         return appPhotoDAO.save(appPhoto);
+    }
+
+    @Override
+    public String generateLink(Long fileId, LinkType linkType) {
+        var hash = hashids.encode(fileId);
+        return linkAddress + "/api/" + linkType + "?id=" + hash;
     }
 }
