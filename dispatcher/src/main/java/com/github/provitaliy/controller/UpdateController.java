@@ -29,25 +29,25 @@ public class UpdateController {
         if (update.hasMessage()) {
             distributeMessagesByType(update);
         } else {
-            log.error("Received unsupported message type {}", update);
+            log.error("Unsupported update type {}", update);
         }
     }
 
     private void distributeMessagesByType(Update update) {
         var message = update.getMessage();
         if (message.hasText()) {
-            processTextMessage(update);
+            updateProducer.produce(queueProperties.getTextMessageUpdate(), update);
         } else if (message.hasDocument()) {
-            processDocMessage(update);
+            updateProducer.produce(queueProperties.getDocMessageUpdate(), update);
         } else if (message.hasPhoto()) {
-            processPhotoMessage(update);
+            updateProducer.produce(queueProperties.getPhotoMessageUpdate(), update);
         } else {
             setUnsupportedTypeView(update);
         }
     }
 
     private void setUnsupportedTypeView(Update update) {
-        var sendMessage = messageUtils.generateSendMessageWithText(update, "Unsupported message type");
+        var sendMessage = messageUtils.generateSendMessageWithText(update, "Неподдерживаемый тип сообщения");
         setView(sendMessage);
     }
 
@@ -55,27 +55,7 @@ public class UpdateController {
         try {
             telegramClient.execute(sendMessage);
         } catch (TelegramApiException e) {
-            log.error("Failed to send message", e);
+            log.error("Error sending message", e);
         }
-    }
-
-    private void setFileIsReceivedView(Update update) {
-        var sendMessage = messageUtils.generateSendMessageWithText(update,
-                "Файл получен. Обработка...");
-        setView(sendMessage);
-    }
-
-    private void processPhotoMessage(Update update) {
-        updateProducer.produce(queueProperties.getPhotoMessageUpdate(), update);
-        setFileIsReceivedView(update);
-    }
-
-    private void processDocMessage(Update update) {
-        updateProducer.produce(queueProperties.getDocMessageUpdate(), update);
-        setFileIsReceivedView(update);
-    }
-
-    private void processTextMessage(Update update) {
-        updateProducer.produce(queueProperties.getTextMessageUpdate(), update);
     }
 }
