@@ -17,7 +17,7 @@ import java.io.IOException;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/file")
+@RequestMapping("/api/file")
 public class FileController {
     private final FileService fileService;
 
