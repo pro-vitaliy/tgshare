@@ -35,7 +35,7 @@ public class TelegramWebhookService {
 
         } catch (RestClientException e) {
             log.error("Ошибка при установке Telegram вебхука: {}", e.getMessage(), e);
-            throw new IllegalStateException("Невозможно продолжить. Ошибка при установке вебхука: " + e.getMessage(), e);
+            throw new IllegalStateException("Ошибка при установке вебхука: " + e.getMessage(), e);
         }
     }
 }
