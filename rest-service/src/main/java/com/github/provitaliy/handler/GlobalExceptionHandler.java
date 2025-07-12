@@ -16,7 +16,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<String> handleResourceNotFoundException(ResourceNotFoundException e) {
         log.warn("Пользователь не найден, {}", e.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Такого пользователя не существует.");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
     @ExceptionHandler(InvalidEncryptedIdException.class)

@@ -19,7 +19,7 @@ public class UserActivationServiceImpl implements UserActivationService {
     public void activateUser(String encodedUserId) {
         var userId = decoder.decodeId(encodedUserId);
         AppUser appUser = userAppDAO.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Пользователь с id " + userId + " не найден."));
+                .orElseThrow(() -> new ResourceNotFoundException("Такого пользователя не существует."));
         appUser.setEmail(appUser.getUnconfirmedEmail());
         appUser.setUnconfirmedEmail(null);
         appUser.setIsActive(true);
