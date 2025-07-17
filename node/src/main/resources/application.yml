@@ -8,11 +8,6 @@ spring:
     username: admin
     password: "0238"
     queues:
-      text-message-update: "rabbit.text.message.update.queue"
-      doc-message-update: "rabbit.doc.message.update.queue"
-      photo-message-update: "rabbit.photo.message.update.queue"
-      answer-message: "rabbit.answer.message.queue"
-      registration-mail: "rabbit.registration.mail.queue"
   datasource:
     url: "jdbc:postgresql://localhost:5432/tgsharedb"
     username: admin
