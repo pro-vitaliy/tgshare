@@ -1,11 +1,9 @@
 package com.github.provitaliy.service.impl;
 
-import com.github.provitaliy.dao.RawDataDAO;
 import com.github.provitaliy.dao.UserAppDAO;
 import com.github.provitaliy.entity.AppDocument;
 import com.github.provitaliy.entity.AppPhoto;
 import com.github.provitaliy.entity.AppUser;
-import com.github.provitaliy.entity.RawData;
 import com.github.provitaliy.exception.UploadFileException;
 import com.github.provitaliy.service.AppUserService;
 import com.github.provitaliy.service.FileService;
@@ -30,7 +28,6 @@ import static com.github.provitaliy.service.enums.ServiceCommands.CANCEL;
 @Service
 @RequiredArgsConstructor
 public class MainServiceImpl implements MainService {
-    private final RawDataDAO rawDataDAO;
     private final ProducerService producerService;
     private final UserAppDAO userAppDAO;
     private final FileService fileService;
@@ -38,7 +35,6 @@ public class MainServiceImpl implements MainService {
 
     @Override
     public void processTextMessage(Update update) {
-        saveRawData(update);
 
         var textMessage = update.getMessage();
         var appUser = findOrSaveAppUser(update);
@@ -75,7 +71,6 @@ public class MainServiceImpl implements MainService {
 
     @Override
     public void processDocMessage(Update update) {
-        saveRawData(update);
         var appUser = findOrSaveAppUser(update);
         var chatId = update.getMessage().getChatId();
 
@@ -97,7 +92,6 @@ public class MainServiceImpl implements MainService {
 
     @Override
     public void processPhotoMessage(Update update) {
-        saveRawData(update);
         var appUser = findOrSaveAppUser(update);
         var chatId = update.getMessage().getChatId();
 
@@ -168,12 +162,5 @@ public class MainServiceImpl implements MainService {
             return userAppDAO.save(transientAppUser);
         }
         return persistentAppUser.get();
-    }
-
-    private void saveRawData(Update update) {
-        RawData rawData = RawData.builder()
-                .event(update)
-                .build();
-        rawDataDAO.save(rawData);
     }
 }
