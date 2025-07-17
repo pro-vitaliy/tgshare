@@ -14,6 +14,11 @@ public enum ServiceCommands {
     private final String value;
 
     public static ServiceCommands fromValue(String text) {
+
+        if (text == null) {
+            return null;
+        }
+
         for (var command : ServiceCommands.values()) {
             if (text.equalsIgnoreCase(command.value)) {
                 return command;
