@@ -1,16 +1,16 @@
 server:
-  port: 8081
+  port: ${DISPATCHER_PORT:8084}
 
 telegram:
   bot:
     token: ${TELEGRAM_BOT_TOKEN}
-    uri: ${TELEGRAM_BOT_URI}
+    uri: ${TELEGRAM_BOT_URL}
 
 spring:
   rabbitmq:
-    host: "localhost"
-    port: 5672
-    username: "admin"
+    host: ${RABBIT_HOST:localhost}
+    port: ${RABBIT_PORT:5672}
+    username: ${RABBIT_USERNAME}
     password: ${RABBIT_PASSWORD}
     queues:
       text-message-update: rabbit.text.message.update.queue

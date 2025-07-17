@@ -1,10 +1,10 @@
 server:
-  port: 8087
+  port: ${MAIL_SERVICE_PORT:8087}
 
 spring:
   mail:
-    host: smtp.yandex.ru
-    port: ${MAIL_PORT:465}
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
     protocol: ${MAIL_PROTOCOL:smtps}
     username: ${MAIL_USERNAME}
     password: ${MAIL_PASSWORD}
@@ -15,13 +15,13 @@ spring:
           starttls:
             enable: true
   rabbitmq:
-    host: localhost
-    port: 5672
-    username: admin
-    password: "0238"
+    host: ${RABBIT_HOST:localhost}
+    port: ${RABBIT_PORT:5672}
+    username: ${RABBIT_USERNAME}
+    password: ${RABBIT_PASSWORD}
     queues:
       registration-mail: "rabbit.registration.mail.queue"
 
 service:
   activation:
-    uri: "http://127.0.0.1:8086/user/activateUser?id={id}"
+    uri: ${USER_ACTIVATION_URL}
