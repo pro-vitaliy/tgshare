@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 @RequiredArgsConstructor
-@ToString
 public enum ServiceCommands {
     HELP("/help"),
     REGISTRATION("/registration"),
@@ -25,5 +24,10 @@ public enum ServiceCommands {
             }
         }
         return null;
+    }
+
+    @Override
+    public String toString() {
+        return value;
     }
 }
