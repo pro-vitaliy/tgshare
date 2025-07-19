@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+telegram:
+  bot:
+    token: test-token
+  endpoints:
+    file-info: "https://api.telegram.org/bot{token}/getFile?file_id={fileId}"
+    file-storage: "https://api.telegram.org/file/bot{token}/{filePath}"
