@@ -1,7 +1,6 @@
 package com.github.provitaliy.service.enums;
 
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 
 @RequiredArgsConstructor
 public enum ServiceCommands {
