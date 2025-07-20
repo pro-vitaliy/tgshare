@@ -9,6 +9,7 @@ import com.github.provitaliy.service.AppUserService;
 import com.github.provitaliy.service.FileService;
 import com.github.provitaliy.service.MainService;
 import com.github.provitaliy.service.ProducerService;
+import com.github.provitaliy.service.constants.BotResponses;
 import com.github.provitaliy.service.enums.LinkType;
 import com.github.provitaliy.service.enums.ServiceCommands;
 import lombok.RequiredArgsConstructor;
@@ -63,9 +64,9 @@ public class MainServiceImpl implements MainService {
 
         return switch (command) {
             case REGISTRATION -> appUserService.registerUser(appUser);
-            case HELP -> help();
-            case START -> "Приветствую! Чтобы посмотреть список доступных команд введите /help";
-            case null, default -> "Неизвестная команда! Чтобы посмотреть список доступных команд введите /help";
+            case HELP -> BotResponses.HELP_RESPONSE;
+            case START -> BotResponses.START_RESPONSE;
+            case null, default -> BotResponses.UNKNOWN_RESPONSE;
         };
     }
 
@@ -120,23 +121,17 @@ public class MainServiceImpl implements MainService {
             sendAnswer(err, chatId);
             return true;
         } else if (!BASIC_STATE.equals(userState)) {
-            var err = "Отмените текущую команду с помощью /cancel для отправки файлов.";
+            var err = "Перед отправкой файла отмените текущую команду с помощью " + CANCEL;
             sendAnswer(err, chatId);
             return true;
         }
         return false;
     }
 
-    private String help() {
-        return "Список доступных команд:\n"
-                + "/cancel - отмена выполнения текущей команды;\n"
-                + "/registration - регистрация пользователя.";
-    }
-
     private String cancelProcess(AppUser appUser) {
         appUser.setUserState(BASIC_STATE);
         userAppDAO.save(appUser);
-        return "Команда отменена!";
+        return BotResponses.CANCEL_RESPONSE;
     }
 
     private void sendAnswer(String output, Long chatId) {

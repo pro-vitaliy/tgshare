@@ -6,6 +6,7 @@ import com.github.provitaliy.entity.AppUser;
 import com.github.provitaliy.entity.enums.UserState;
 import com.github.provitaliy.service.AppUserService;
 import com.github.provitaliy.service.ProducerService;
+import com.github.provitaliy.service.constants.BotResponses;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.hashids.Hashids;
@@ -21,11 +22,11 @@ public class AppUserServiceImpl implements AppUserService {
     @Override
     public String registerUser(AppUser appUser) {
         if (appUser.getIsActive()) {
-            return "Вы уже зарегистрированы!";
+            return BotResponses.ALREADY_REGISTERED_RESPONSE;
         }
         appUser.setUserState(UserState.WAIT_FOR_EMAIL_STATE);
         userAppDAO.save(appUser);
-        return "Введите ваш email";
+        return BotResponses.WAIT_FOR_EMAIL_RESPONSE;
     }
 
     @Override
@@ -33,11 +34,11 @@ public class AppUserServiceImpl implements AppUserService {
         email = email.trim().toLowerCase();
 
         if (!isValidEmail(email)) {
-            return "Введен некорректный email. Попробуйте еще раз или введите /cancel для отмены.";
+            return BotResponses.INCORRECT_EMAIL_ANSWER;
         }
 
         if (userAppDAO.existsByEmail(email)) {
-            return "Пользователь с таким email уже существует. Введите другой email или /cancel для отмены.";
+            return BotResponses.EMAIL_ALREADY_EXISTS;
         }
 
         appUser.setUnconfirmedEmail(email);
@@ -45,7 +46,7 @@ public class AppUserServiceImpl implements AppUserService {
         userAppDAO.save(appUser);
         producerService.produceRegistrationMail(createMailParams(appUser));
 
-        return "Пройдите по ссылке в письме для завершения регистрации.";
+        return BotResponses.EMAIL_CONFIRMATION_RESPONSE;
     }
 
     private boolean isValidEmail(String email) {
