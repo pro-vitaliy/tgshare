@@ -24,4 +24,6 @@ public class BotResponses {
             + "Введите другой email или %s для отмены.".formatted(ServiceCommands.CANCEL);
     public static final String INCORRECT_EMAIL_ANSWER = "Введен некорректный email. Попробуйте еще раз или "
             + "введите %s для отмены.".formatted(ServiceCommands.CANCEL);
+    public static final String NOT_ALLOW_TO_SEND_FILE_RESPONSE = "Зарегистрируйтесь для отправки контента с"
+            + " помощью команды " + ServiceCommands.REGISTRATION;
 }
