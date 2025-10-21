@@ -36,11 +36,11 @@ public class UpdateController {
     private void distributeMessagesByType(Update update) {
         var message = update.getMessage();
         if (message.hasText()) {
-            updateProducer.produce(queueProperties.getTextMessageUpdate(), update);
+            updateProducer.produceTextMessageUpdate(update);
         } else if (message.hasDocument()) {
-            updateProducer.produce(queueProperties.getDocMessageUpdate(), update);
+            updateProducer.produceDocMessageUpdate(update);
         } else if (message.hasPhoto()) {
-            updateProducer.produce(queueProperties.getPhotoMessageUpdate(), update);
+            updateProducer.producePhotoMessageUpdate(update);
         } else {
             setUnsupportedTypeView(update);
         }
