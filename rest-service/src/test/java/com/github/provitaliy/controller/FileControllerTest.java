@@ -1,8 +1,8 @@
 package com.github.provitaliy.controller;
 
-import com.github.provitaliy.dao.AppDocumentDAO;
-import com.github.provitaliy.dao.AppPhotoDAO;
-import com.github.provitaliy.dao.BinaryContentDAO;
+import com.github.provitaliy.repository.AppDocumentRepository;
+import com.github.provitaliy.repository.AppPhotoRepository;
+import com.github.provitaliy.repository.BinaryContentRepository;
 import com.github.provitaliy.entity.AppDocument;
 import com.github.provitaliy.entity.AppPhoto;
 import com.github.provitaliy.entity.BinaryContent;
@@ -34,13 +34,13 @@ class FileControllerTest {
     private FileService fileService;
 
     @Autowired
-    private AppDocumentDAO appDocumentDAO;
+    private AppDocumentRepository appDocumentRepository;
 
     @Autowired
-    private AppPhotoDAO appPhotoDAO;
+    private AppPhotoRepository appPhotoRepository;
 
     @Autowired
-    private BinaryContentDAO binaryContentDAO;
+    private BinaryContentRepository binaryContentRepository;
 
     @Autowired
     private Hashids hashids;
@@ -50,14 +50,14 @@ class FileControllerTest {
 
     @BeforeEach
     void beforeEach() {
-        appDocumentDAO.deleteAll();
-        appPhotoDAO.deleteAll();
-        binaryContentDAO.deleteAll();
+        appDocumentRepository.deleteAll();
+        appPhotoRepository.deleteAll();
+        binaryContentRepository.deleteAll();
 
         byte[] docBytes = "test document".getBytes();
         byte[] photoBytes = "test photo".getBytes();
-        BinaryContent binaryDocument = binaryContentDAO.save(new BinaryContent(docBytes));
-        BinaryContent binaryPhoto = binaryContentDAO.save(new BinaryContent(photoBytes));
+        BinaryContent binaryDocument = binaryContentRepository.save(new BinaryContent(docBytes));
+        BinaryContent binaryPhoto = binaryContentRepository.save(new BinaryContent(photoBytes));
 
         document = AppDocument.builder()
                 .docName("document.txt")
@@ -69,8 +69,8 @@ class FileControllerTest {
                 .binaryContent(binaryPhoto)
                 .build();
 
-        document = appDocumentDAO.save(document);
-        photo = appPhotoDAO.save(photo);
+        document = appDocumentRepository.save(document);
+        photo = appPhotoRepository.save(photo);
     }
 
     @Test

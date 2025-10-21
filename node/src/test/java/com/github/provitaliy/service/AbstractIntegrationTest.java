@@ -5,7 +5,7 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.RabbitMQContainer;
 import org.testcontainers.utility.DockerImageName;
 
-public class AbstractIntegrationTest {
+class AbstractIntegrationTest {
 
     static RabbitMQContainer rabbitMQContainer = new RabbitMQContainer(
             DockerImageName.parse("rabbitmq:4.1.2-alpine")

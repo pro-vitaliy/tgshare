@@ -1,7 +1,6 @@
 package com.github.provitaliy.service;
 
 import com.github.provitaliy.dto.MailParams;
-import com.github.provitaliy.service.impl.MailSenderServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,7 +28,7 @@ class MailSenderServiceTest {
     private JavaMailSender mailSender;
 
     @InjectMocks
-    private MailSenderServiceImpl mailSenderService;
+    private MailSenderService mailSenderService;
 
     @Captor
     private ArgumentCaptor<SimpleMailMessage> messageCaptor;

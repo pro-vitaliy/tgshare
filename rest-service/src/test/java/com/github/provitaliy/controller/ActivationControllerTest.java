@@ -1,6 +1,6 @@
 package com.github.provitaliy.controller;
 
-import com.github.provitaliy.dao.UserAppDAO;
+import com.github.provitaliy.repository.AppUserRepository;
 import com.github.provitaliy.entity.AppUser;
 import org.hashids.Hashids;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +25,7 @@ class ActivationControllerTest {
     MockMvc mockMvc;
 
     @Autowired
-    UserAppDAO userAppDAO;
+    AppUserRepository appUserRepository;
 
     @Autowired
     Hashids hashids;
@@ -34,7 +34,7 @@ class ActivationControllerTest {
 
     @BeforeEach
     void beforeEach() {
-        userAppDAO.deleteAll();
+        appUserRepository.deleteAll();
 
         String unconfirmedEmail = "mail@ex.io";
         AppUser appUser = AppUser.builder()
@@ -42,7 +42,7 @@ class ActivationControllerTest {
                 .isActive(false)
                 .build();
 
-        user = userAppDAO.save(appUser);
+        user = appUserRepository.save(appUser);
     }
 
     @Test
@@ -58,7 +58,7 @@ class ActivationControllerTest {
                 .andExpect(content().string("Регистрация успешно завершена!"))
                 .andReturn();
 
-        AppUser actualUser = userAppDAO.findById(userId).orElseThrow();
+        AppUser actualUser = appUserRepository.findById(userId).orElseThrow();
 
         assertThat(actualUser.getEmail()).isEqualTo(unconfirmedEmail);
         assertThat(actualUser.getUnconfirmedEmail()).isNull();

@@ -1,6 +1,6 @@
 package com.github.provitaliy.service;
 
-import com.github.provitaliy.dao.UserAppDAO;
+import com.github.provitaliy.repository.AppUserRepository;
 import com.github.provitaliy.dto.MailParams;
 import com.github.provitaliy.entity.AppUser;
 import com.github.provitaliy.entity.enums.UserState;
@@ -40,13 +40,13 @@ class TextMessageScenarioTest extends AbstractIntegrationTest {
     private RabbitTemplate rabbitTemplate;
 
     @Autowired
-    private UserAppDAO userAppDAO;
+    private AppUserRepository appUserRepository;
 
     private final Long tgUserFakeId = 100L;
 
     @BeforeEach
     void beforeEach() {
-        userAppDAO.deleteAll();
+        appUserRepository.deleteAll();
     }
 
     @Test
@@ -90,7 +90,7 @@ class TextMessageScenarioTest extends AbstractIntegrationTest {
 
         SendMessage actual = (SendMessage) rabbitTemplate.getMessageConverter().fromMessage(message);
 
-        Optional<AppUser> expectedAppUser = userAppDAO.findByTelegramUserId(tgUserFakeId);
+        Optional<AppUser> expectedAppUser = appUserRepository.findByTelegramUserId(tgUserFakeId);
         assertNotNull(actual);
         assertTrue(expectedAppUser.isPresent());
         assertEquals(BotResponses.HELP_RESPONSE, actual.getText());
@@ -100,7 +100,7 @@ class TextMessageScenarioTest extends AbstractIntegrationTest {
     void shouldProcessCancelCommand() throws Exception {
         Update update = TestDataFactory.createUpdateWithTextMessage(tgUserFakeId, "/cancel");
         AppUser appUser = TestDataFactory.createNotRegisteredAppUser(tgUserFakeId, UserState.WAIT_FOR_EMAIL_STATE);
-        userAppDAO.save(appUser);
+        appUserRepository.save(appUser);
 
         rabbitTemplate.convertAndSend(
                 ExchangeNames.MAIN,
@@ -114,7 +114,7 @@ class TextMessageScenarioTest extends AbstractIntegrationTest {
                 .until(() -> rabbitTemplate.receive(QueueNames.ANSWER_MESSAGE_QUEUE), Objects::nonNull);
 
         SendMessage actual = (SendMessage) rabbitTemplate.getMessageConverter().fromMessage(message);
-        Optional<AppUser> updatedAppUser = userAppDAO.findByTelegramUserId(tgUserFakeId);
+        Optional<AppUser> updatedAppUser = appUserRepository.findByTelegramUserId(tgUserFakeId);
 
         assertNotNull(actual);
         assertTrue(updatedAppUser.isPresent());
@@ -126,7 +126,7 @@ class TextMessageScenarioTest extends AbstractIntegrationTest {
     void shouldProcessRegistrationIfNotRegistered() throws Exception {
         Update update = TestDataFactory.createUpdateWithTextMessage(tgUserFakeId, "/registration");
         AppUser appUser = TestDataFactory.createNotRegisteredAppUser(tgUserFakeId, UserState.BASIC_STATE);
-        userAppDAO.save(appUser);
+        appUserRepository.save(appUser);
 
         rabbitTemplate.convertAndSend(
                 ExchangeNames.MAIN,
@@ -140,7 +140,7 @@ class TextMessageScenarioTest extends AbstractIntegrationTest {
                 .until(() -> rabbitTemplate.receive(QueueNames.ANSWER_MESSAGE_QUEUE), Objects::nonNull);
 
         SendMessage actual = (SendMessage) rabbitTemplate.getMessageConverter().fromMessage(message);
-        Optional<AppUser> updatedAppUser = userAppDAO.findByTelegramUserId(tgUserFakeId);
+        Optional<AppUser> updatedAppUser = appUserRepository.findByTelegramUserId(tgUserFakeId);
 
         assertNotNull(actual);
         assertTrue(updatedAppUser.isPresent());
@@ -153,7 +153,7 @@ class TextMessageScenarioTest extends AbstractIntegrationTest {
         String testEmail = "email@test.io";
         Update update = TestDataFactory.createUpdateWithTextMessage(tgUserFakeId, "/registration");
         AppUser appUser = TestDataFactory.createRegisteredAppUser(tgUserFakeId, testEmail, UserState.BASIC_STATE);
-        userAppDAO.save(appUser);
+        appUserRepository.save(appUser);
 
         rabbitTemplate.convertAndSend(
                 ExchangeNames.MAIN,
@@ -167,7 +167,7 @@ class TextMessageScenarioTest extends AbstractIntegrationTest {
                 .until(() -> rabbitTemplate.receive(QueueNames.ANSWER_MESSAGE_QUEUE), Objects::nonNull);
 
         SendMessage actual = (SendMessage) rabbitTemplate.getMessageConverter().fromMessage(message);
-        Optional<AppUser> updatedAppUser = userAppDAO.findByTelegramUserId(tgUserFakeId);
+        Optional<AppUser> updatedAppUser = appUserRepository.findByTelegramUserId(tgUserFakeId);
 
         assertNotNull(actual);
         assertTrue(updatedAppUser.isPresent());
@@ -180,7 +180,7 @@ class TextMessageScenarioTest extends AbstractIntegrationTest {
         String testEmail = "email@test.io";
         Update update = TestDataFactory.createUpdateWithTextMessage(tgUserFakeId, testEmail);
         AppUser appUser = TestDataFactory.createNotRegisteredAppUser(tgUserFakeId, UserState.WAIT_FOR_EMAIL_STATE);
-        userAppDAO.save(appUser);
+        appUserRepository.save(appUser);
 
         rabbitTemplate.convertAndSend(
                 ExchangeNames.MAIN,
@@ -200,7 +200,7 @@ class TextMessageScenarioTest extends AbstractIntegrationTest {
 
         SendMessage actualAnswer = (SendMessage) rabbitTemplate.getMessageConverter().fromMessage(answerMessage);
         MailParams actualParams = (MailParams) rabbitTemplate.getMessageConverter().fromMessage(mailParamsMessage);
-        Optional<AppUser> updatedAppUser = userAppDAO.findByTelegramUserId(tgUserFakeId);
+        Optional<AppUser> updatedAppUser = appUserRepository.findByTelegramUserId(tgUserFakeId);
 
         assertNotNull(actualAnswer);
         assertNotNull(actualParams);
@@ -220,8 +220,8 @@ class TextMessageScenarioTest extends AbstractIntegrationTest {
                 testEmail,
                 UserState.BASIC_STATE
         );
-        userAppDAO.save(appUser);
-        userAppDAO.save(existsAppUser);
+        appUserRepository.save(appUser);
+        appUserRepository.save(existsAppUser);
 
         rabbitTemplate.convertAndSend(
                 ExchangeNames.MAIN,
@@ -235,7 +235,7 @@ class TextMessageScenarioTest extends AbstractIntegrationTest {
                 .until(() -> rabbitTemplate.receive(QueueNames.ANSWER_MESSAGE_QUEUE), Objects::nonNull);
 
         SendMessage actualAnswer = (SendMessage) rabbitTemplate.getMessageConverter().fromMessage(message);
-        Optional<AppUser> updatedAppUser = userAppDAO.findByTelegramUserId(tgUserFakeId);
+        Optional<AppUser> updatedAppUser = appUserRepository.findByTelegramUserId(tgUserFakeId);
 
         assertNotNull(actualAnswer);
         assertTrue(updatedAppUser.isPresent());
@@ -248,7 +248,7 @@ class TextMessageScenarioTest extends AbstractIntegrationTest {
         String testEmail = "incorrect@email";
         Update update = TestDataFactory.createUpdateWithTextMessage(tgUserFakeId, testEmail);
         AppUser appUser = TestDataFactory.createNotRegisteredAppUser(tgUserFakeId, UserState.WAIT_FOR_EMAIL_STATE);
-        userAppDAO.save(appUser);
+        appUserRepository.save(appUser);
 
         rabbitTemplate.convertAndSend(
                 ExchangeNames.MAIN,
