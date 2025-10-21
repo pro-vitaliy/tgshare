@@ -43,9 +43,6 @@ class UpdateControllerTest {
     private UpdateController updateController;
 
     @Captor
-    private ArgumentCaptor<String> queueCaptor;
-
-    @Captor
     private ArgumentCaptor<Update> updateCaptor;
 
     @Captor
@@ -57,19 +54,14 @@ class UpdateControllerTest {
         Message textMessage = new Message();
         textMessage.setText("Hello");
         textUpdate.setMessage(textMessage);
-
         String textQueue = "text.queue";
-
-        when(queueProperties.getTextMessageUpdate()).thenReturn(textQueue);
 
         updateController.processUpdate(textUpdate);
 
-        verify(updateProducer).produce(queueCaptor.capture(), updateCaptor.capture());
+        verify(updateProducer).produceTextMessageUpdate(updateCaptor.capture());
 
-        String produceToQueue = queueCaptor.getValue();
         Update updateToProduce = updateCaptor.getValue();
 
-        assertEquals(textQueue, produceToQueue);
         assertEquals(textUpdate, updateToProduce);
     }
 
@@ -82,16 +74,12 @@ class UpdateControllerTest {
 
         String docQueue = "doc.queue";
 
-        when(queueProperties.getDocMessageUpdate()).thenReturn(docQueue);
-
         updateController.processUpdate(docUpdate);
 
-        verify(updateProducer).produce(queueCaptor.capture(), updateCaptor.capture());
+        verify(updateProducer).produceDocMessageUpdate(updateCaptor.capture());
 
-        String produceToQueue = queueCaptor.getValue();
         Update updateToProduce = updateCaptor.getValue();
 
-        assertEquals(docQueue, produceToQueue);
         assertEquals(docUpdate, updateToProduce);
     }
 
@@ -105,16 +93,11 @@ class UpdateControllerTest {
 
         String photoQueue = "photo.queue";
 
-        when(queueProperties.getPhotoMessageUpdate()).thenReturn(photoQueue);
-
         updateController.processUpdate(photoUpdate);
 
-        verify(updateProducer).produce(queueCaptor.capture(), updateCaptor.capture());
-
-        String produceToQueue = queueCaptor.getValue();
+        verify(updateProducer).producePhotoMessageUpdate(updateCaptor.capture());
         Update updateToProduce = updateCaptor.getValue();
 
-        assertEquals(photoQueue, produceToQueue);
         assertEquals(photoUpdate, updateToProduce);
     }
 
