@@ -2,6 +2,7 @@ package com.github.provitaliy.service.utils;
 
 import com.github.provitaliy.entity.AppUser;
 import com.github.provitaliy.entity.enums.UserState;
+import org.telegram.telegrambots.meta.api.objects.Document;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.chat.Chat;
@@ -30,6 +31,18 @@ public class TestDataFactory {
     public static Update createUpdateWithTextMessage(Long tgUserId, String text) {
         Long defaultChatId = 123L;
         return createUpdateWithTextMessage(tgUserId, text, defaultChatId);
+    }
+
+    public static Update createUpdateWithDocument(Long chatId, Long docId) {
+        Update update = new Update();
+        Message message = new Message();
+        Document document = Document.builder()
+                .fileName("document.txt")
+                .fileId(String.valueOf(docId))
+                .mimeType("text/plain")
+                .build();
+
+        return update;
     }
 
     public static AppUser createRegisteredAppUser(Long tgUserId, String email, UserState state) {
