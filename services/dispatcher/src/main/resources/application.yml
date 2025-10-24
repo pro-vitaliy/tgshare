@@ -1,0 +1,8 @@
+server:
+  port: ${DISPATCHER_PORT:8084}
+
+telegram:
+  bot:
+    token: ${TELEGRAM_BOT_TOKEN}
+    url: ${TELEGRAM_BOT_URL}
+
