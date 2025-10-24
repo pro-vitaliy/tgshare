@@ -4,7 +4,7 @@ server:
 telegram:
   bot:
     token: ${TELEGRAM_BOT_TOKEN}
-    url: ${TELEGRAM_BOT_URL}
+    url: ${TELEGRAM_BOT_URL} # static internet address for webhook
 
 spring:
   rabbitmq:
