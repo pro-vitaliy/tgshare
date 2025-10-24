@@ -1,4 +1,4 @@
-package com.github.provitaliy;
+package com.github.provitaliy.dispatcher;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

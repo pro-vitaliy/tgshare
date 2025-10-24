@@ -1,4 +1,4 @@
-package com.github.provitaliy.configuration;
+package com.github.provitaliy.dispatcher.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

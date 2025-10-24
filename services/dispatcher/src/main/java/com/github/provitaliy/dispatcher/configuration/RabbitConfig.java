@@ -1,4 +1,4 @@
-package com.github.provitaliy.configuration;
+package com.github.provitaliy.dispatcher.configuration;
 
 import com.github.provitaliy.common.messaging.ExchangeNames;
 import com.github.provitaliy.common.messaging.QueueNames;
