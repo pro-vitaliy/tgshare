@@ -14,6 +14,6 @@ public class WebhookController {
 
     @PostMapping("/")
     public void onUpdatesReceived(@RequestBody Update update) {
-
+        updateController.processUpdate(update);
     }
 }
