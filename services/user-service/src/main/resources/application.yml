@@ -1,0 +1,13 @@
+grpc:
+  server:
+    port: 9090
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/tgsharedb
+    username: admin
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+      dialect: org.hibernate.dialect.PostgreSQLDialect
