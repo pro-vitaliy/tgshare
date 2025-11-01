@@ -1,4 +1,4 @@
-package com.github.provitaliy.common.enums;
+package com.github.provitaliy.node.user;
 
 public enum UserState {
     BASIC_STATE,
