@@ -2,6 +2,9 @@ grpc:
   server:
     port: 9090
 
+server:
+  port: 8087
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/tgsharedb
@@ -10,4 +13,10 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-      dialect: org.hibernate.dialect.PostgreSQLDialect
+
+salt: ${SALT:test}
+
+service:
+  user-activation:
+    url: ${USER_SERVICE_URL:http://localhost:8087}
+    endpoint: /user/activateUser
