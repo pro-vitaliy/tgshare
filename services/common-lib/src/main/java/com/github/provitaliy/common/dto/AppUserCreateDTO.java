@@ -11,6 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AppUserCreateDTO {
     private Long telegramUserId;
+    private Long chatId;
     private String firstName;
     private String lastName;
     private String username;

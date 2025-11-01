@@ -7,33 +7,27 @@ option java_package = "com.github.provitaliy.common.grpc";
 option java_outer_classname = "UserProto";
 
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/empty.proto";
 
 message GetOrCreateAppUserRequest {
   int64 telegram_user_id = 1;
-  string first_name = 2;
-  string last_name = 3;
-  string username = 4;
+  int64 chat_id = 2;
+  string first_name = 3;
+  string last_name = 4;
+  string username = 5;
 }
 
 message AppUserResponse {
   int64 id = 1;
   int64 telegram_user_id = 2;
-  string first_name = 3;
-  string last_name = 4;
-  string username = 5;
-  string email = 6;
-  string unconfirmed_email = 7;
+  int64 chat_id = 3;
+  string first_name = 4;
+  string last_name = 5;
+  string username = 6;
+  string email = 7;
   bool is_active = 8;
   google.protobuf.Timestamp first_login_date = 9;
 }
 
-message UpdateUnconfirmedEmailRequest {
-  int64 telegram_user_id = 1;
-  string email = 2;
-}
-
 service AppUserService {
   rpc GetOrCreateAppUser(GetOrCreateAppUserRequest) returns (AppUserResponse);
-  rpc UpdateUnconfirmedEmail(UpdateUnconfirmedEmailRequest) returns (google.protobuf.Empty);
 }

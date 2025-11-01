@@ -5,5 +5,6 @@ public class QueueNames {
     public static final String DOC_MESSAGE_UPDATE_QUEUE = "rabbit.doc.message.update.queue";
     public static final String PHOTO_MESSAGE_UPDATE_QUEUE = "rabbit.photo.message.update.queue";
     public static final String ANSWER_MESSAGE_QUEUE = "rabbit.answer.message.queue";
-    public static final String REGISTRATION_MAIL_QUEUE = "rabbit.registration.mail.queue";
+    public static final String USER_EMAIL_ENTERED_QUEUE = "rabbit.user.email.entered.queue";
+    public static final String EMAIL_SEND_QUEUE = "rabbit.email.send.queue";
 }

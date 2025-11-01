@@ -14,11 +14,11 @@ import java.time.LocalDateTime;
 public class AppUserDTO {
     private Long id;
     private Long telegramUserId;
+    private Long chatId;
     private String firstName;
     private String lastName;
     private String username;
     private String email;
-    private String unconfirmedEmail;
     private Boolean isActive;
     private LocalDateTime firstLoginDate;
 }
