@@ -1,9 +1,6 @@
 package com.github.provitaliy.userservice.entity;
 
-import com.github.provitaliy.common.enums.UserState;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -27,6 +24,7 @@ public class AppUser {
     private Long id;
 
     private Long telegramUserId;
+    private Long chatId;
     private String firstName;
     private String lastName;
     private String username;
