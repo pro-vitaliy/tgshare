@@ -1,5 +1,6 @@
 package com.github.provitaliy.node.service;
 
+import com.github.provitaliy.common.event.FileUploadEvent;
 import com.github.provitaliy.common.event.UserEmailEnteredEvent;
 import com.github.provitaliy.common.messaging.ExchangeNames;
 import com.github.provitaliy.common.messaging.RoutingKeys;
@@ -26,6 +27,14 @@ public class ProducerService {
                 ExchangeNames.MAIN,
                 RoutingKeys.ROUTING_KEY_USER_EMAIL_ENTERED,
                 emailEnteredEvent
+        );
+    }
+
+    public void produceFileUploadRequest(FileUploadEvent fileUploadEvent) {
+        rabbitTemplate.convertAndSend(
+                ExchangeNames.MAIN,
+                RoutingKeys.ROUTING_KEY_FILE_UPLOAD_REQUEST,
+                fileUploadEvent
         );
     }
 }
