@@ -7,4 +7,6 @@ public class RoutingKeys {
     public static final String ROUTING_KEY_ANSWER_MESSAGE = "routing.answer";
     public static final String ROUTING_KEY_USER_EMAIL_ENTERED = "routing.user.email.entered";
     public static final String ROUTING_KEY_EMAIL_SEND = "routing.email.send";
+    public static final String ROUTING_KEY_FILE_UPLOAD_REQUEST = "routing.file.upload.request";
+    
 }
