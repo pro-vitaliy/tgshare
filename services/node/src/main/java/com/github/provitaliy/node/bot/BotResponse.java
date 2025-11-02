@@ -24,4 +24,5 @@ public class BotResponse {
                                                         + "введите %s для отмены.".formatted(ServiceCommand.CANCEL);
     public static final String NOT_ALLOW_TO_SEND_FILE_RESPONSE = "Зарегистрируйтесь для отправки контента с"
                                                                  + " помощью команды " + ServiceCommand.REGISTRATION;
+    public static final String FILE_RECEIVED_RESPONSE = "Файл получен. Ссылка для скачивания скоро будет готова.";
 }
