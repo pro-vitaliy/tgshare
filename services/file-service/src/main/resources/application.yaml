@@ -4,3 +4,23 @@ server:
 spring:
   application:
     name: file-service
+  datasource:
+    url: ${FILE_SERVICE_DB_URL}
+    username: ${FILE_SERVICE_DB_USERNAME}
+    password: ${FILE_SERVICE_DB_PASSWORD}
+  rabbitmq:
+    host: ${RABBIT_HOST:localhost}
+    port: ${RABBIT_PORT:5672}
+    username: ${RABBIT_USERNAME}
+    password: ${RABBIT_PASSWORD}
+
+minio:
+  url: ${MINIO_URL:http://localhost:9000}
+  access-key: ${MINIO_ACCESS_KEY:minioadmin}
+  secret-key: ${MINIO_SECRET_KEY:minioadmin}
+  bucket: ${MINIO_BUCKET_NAME:tgshare-files}
+
+
+telegram:
+  bot:
+    token: ${TELEGRAM_BOT_TOKEN}
