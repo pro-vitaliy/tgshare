@@ -28,6 +28,7 @@
 	</scm>
 	<properties>
 		<java.version>21</java.version>
+        <io.minio.version>8.6.0</io.minio.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -50,6 +51,11 @@
             <groupId>com.github.provitaliy</groupId>
             <artifactId>common-lib</artifactId>
             <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+            <version>${io.minio.version}</version>
         </dependency>
 
 		<dependency>
