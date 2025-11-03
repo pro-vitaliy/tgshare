@@ -1,26 +1,20 @@
 package com.github.provitaliy.fileservice.config;
 
 import io.minio.MinioClient;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Setter
-@Getter
-@ConfigurationProperties(prefix = "minio")
+@RequiredArgsConstructor
 @Configuration
 public class MinioConfig {
-    private String url;
-    private String accessKey;
-    private String secretKey;
+    private final MinioProperties properties;
 
     @Bean
     public MinioClient minioClient() {
         return MinioClient.builder()
-                .endpoint(url)
-                .credentials(accessKey, secretKey)
+                .endpoint(properties.getUrl())
+                .credentials(properties.getAccessKey(), properties.getSecretKey())
                 .build();
     }
 }
