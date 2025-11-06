@@ -1,4 +1,5 @@
 server:
+  host: ${FILE_SERVICE_HOST:localhost}
   port: ${FILE_SERVICE_PORT:8086}
 
 spring:
@@ -13,14 +14,29 @@ spring:
     port: ${RABBIT_PORT:5672}
     username: ${RABBIT_USERNAME}
     password: ${RABBIT_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
 
 minio:
   url: ${MINIO_URL:http://localhost:9000}
   access-key: ${MINIO_ACCESS_KEY:minioadmin}
   secret-key: ${MINIO_SECRET_KEY:minioadmin}
   bucket: ${MINIO_BUCKET_NAME:tgshare-files}
-
+  default-ttl-days: 14
 
 telegram:
-  bot:
-    token: ${TELEGRAM_BOT_TOKEN}
+  bot-token: ${TELEGRAM_BOT_TOKEN}
+  file-info-url: ${TG_BOT_FILE_INFO_URL:https://api.telegram.org/bot{token}/getFile?file_id={fileId}}
+  file-storage-url: ${TG_BOT_FILE_STORAGE_URL:https://api.telegram.org/file/bot{token}/{filePath}}
+
+file-service:
+  host: ${FILE_SERVICE_HOST:localhost}
+  port: ${FILE_SERVICE_PORT:${server.port}}
+  download-endpoint: /api/files/
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type.descriptor.sql.BasicBinder: trace
