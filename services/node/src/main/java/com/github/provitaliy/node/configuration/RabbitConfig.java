@@ -36,31 +36,45 @@ public class RabbitConfig {
     }
 
     @Bean
+    public Queue fileReadyQueue() {
+        return new Queue(QueueNames.FILE_READY_QUEUE);
+    }
+
+    @Bean
     public DirectExchange mainExchange() {
         return new DirectExchange(ExchangeNames.MAIN);
     }
 
     @Bean
-    public Binding textMessageBinding(Queue textMessageQueue, DirectExchange mainExchange) {
+    public Binding textMessageBinding() {
         return BindingBuilder
-                .bind(textMessageQueue)
-                .to(mainExchange)
+                .bind(textMessageQueue())
+                .to(mainExchange())
                 .with(RoutingKeys.ROUTING_KEY_TEXT_MESSAGE_UPDATE);
     }
 
     @Bean
-    public Binding docMessageBinding(Queue docMessageQueue, DirectExchange mainExchange) {
+    public Binding docMessageBinding() {
         return BindingBuilder
-                .bind(docMessageQueue)
-                .to(mainExchange)
+                .bind(docMessageQueue())
+                .to(mainExchange())
                 .with(RoutingKeys.ROUTING_KEY_DOC_MESSAGE_UPDATE);
     }
 
     @Bean
-    public Binding photoMessageBinding(Queue photoMessageQueue, DirectExchange mainExchange) {
+    public Binding photoMessageBinding() {
         return BindingBuilder
-                .bind(photoMessageQueue)
-                .to(mainExchange)
+                .bind(photoMessageQueue())
+                .to(mainExchange())
                 .with(RoutingKeys.ROUTING_KEY_PHOTO_MESSAGE_UPDATE);
     }
+
+    @Bean
+    public Binding fileReadyBinding() {
+        return BindingBuilder
+                .bind(fileReadyQueue())
+                .to(mainExchange())
+                .with(RoutingKeys.ROUTING_KEY_FILE_READY);
+    }
+
 }
