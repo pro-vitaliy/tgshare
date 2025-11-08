@@ -1,8 +1,10 @@
 package com.github.provitaliy.node.service;
 
+import com.github.provitaliy.common.event.FileReadyEvent;
 import com.github.provitaliy.common.messaging.QueueNames;
 import com.github.provitaliy.node.handler.FileUpdateHandler;
 import com.github.provitaliy.node.handler.TextUpdateHandler;
+import com.github.provitaliy.node.handler.UserNotificationEventHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -15,6 +17,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public class ConsumerService {
     private final TextUpdateHandler textUpdateHandler;
     private final FileUpdateHandler fileUpdateHandler;
+    private UserNotificationEventHandler userNotificationEventHandler;
 
     @RabbitListener(queues = QueueNames.TEXT_MESSAGE_UPDATE_QUEUE)
     public void consumeTextMessageUpdates(Update update) {
@@ -32,5 +35,10 @@ public class ConsumerService {
     public void consumePhotoMessageUpdates(Update update) {
         log.debug("NODE: Photo message is received");
         fileUpdateHandler.handlePhotoUpdate(update);
+    }
+
+    @RabbitListener(queues = QueueNames.FILE_READY_QUEUE)
+    public void consumeFileReadyEvent(FileReadyEvent event) {
+        userNotificationEventHandler.handleFileReadyEvent(event.telegramUserId(), event.fileUrl());
     }
 }
