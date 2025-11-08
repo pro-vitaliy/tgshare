@@ -13,7 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class FileUploadEvent {
     private String telegramFileId;
-    private Long ownerId;
+    private Long telegramUserId;
     private String fileName;
     private String mimeType;
     private Long fileSize;
