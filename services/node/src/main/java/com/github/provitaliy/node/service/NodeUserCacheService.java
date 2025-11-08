@@ -17,7 +17,7 @@ public class NodeUserCacheService {
         redisTemplate.opsForValue().set(PREFIX + nodeUser.getTelegramUserId(), nodeUser);
     }
 
-    public Optional<NodeUser> findByTelegramId(long telegramUserId) {
+    public Optional<NodeUser> findByTelegramId(Long telegramUserId) {
         return Optional.ofNullable(redisTemplate.opsForValue().get(PREFIX + telegramUserId));
     }
 
