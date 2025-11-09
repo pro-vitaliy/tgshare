@@ -9,4 +9,5 @@ public class QueueNames {
     public static final String EMAIL_SEND_QUEUE = "rabbit.email.send.queue";
     public static final String FILE_UPLOAD_REQUEST_QUEUE = "rabbit.file.upload.request.queue";
     public static final String FILE_READY_QUEUE = "rabbit.file.ready.queue";
+    public static final String USER_ACTIVATED_QUEUE = "rabbit.user.activated.queue";
 }
