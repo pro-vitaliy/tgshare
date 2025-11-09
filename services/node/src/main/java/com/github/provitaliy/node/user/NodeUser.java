@@ -8,7 +8,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class NodeUser {
-    private Long id;
     private Long telegramUserId;
     private Long chatId;
     private String username;
