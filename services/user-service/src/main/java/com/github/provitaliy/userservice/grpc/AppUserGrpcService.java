@@ -5,6 +5,7 @@ import com.github.provitaliy.common.dto.AppUserDTO;
 import com.github.provitaliy.common.grpc.AppUserResponse;
 import com.github.provitaliy.common.grpc.AppUserServiceGrpc;
 import com.github.provitaliy.common.grpc.GetOrCreateAppUserRequest;
+import com.github.provitaliy.common.grpc.TelegramUserIdRequest;
 import com.github.provitaliy.userservice.mapper.AppUserGrpcMapper;
 import com.github.provitaliy.userservice.service.AppUserService;
 import io.grpc.stub.StreamObserver;
@@ -26,5 +27,18 @@ public class AppUserGrpcService extends AppUserServiceGrpc.AppUserServiceImplBas
 
         responseObserver.onNext(response);
         responseObserver.onCompleted();
+
+//        TODO: добавить catch блоки для отлова исключений и отправки соответствующих статусов в ответ
+    }
+
+    @Override
+    public void getAppUserByTelegramId(TelegramUserIdRequest request, StreamObserver<AppUserResponse> responseObserver) {
+        AppUserDTO appUserDto = appUserService.getAppUserByTelegramId(request.getTelegramUserId());
+        AppUserResponse response = grpcMapper.toGrpc(appUserDto);
+
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+
+//        TODO: добавить catch блоки для отлова исключений и отправки соответствующих статусов в ответ
     }
 }
