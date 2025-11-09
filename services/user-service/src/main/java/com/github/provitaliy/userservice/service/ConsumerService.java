@@ -13,6 +13,6 @@ public class ConsumerService {
 
     @RabbitListener(queues = QueueNames.USER_EMAIL_ENTERED_QUEUE)
     public void consumeUserEmailEnteredEvent(UserEmailEnteredEvent emailEnteredEvent) {
-        appUserService.updateUnconfirmedEmail(emailEnteredEvent.getUserId(), emailEnteredEvent.getEmail());
+        appUserService.updateUnconfirmedEmail(emailEnteredEvent.getTelegramUserId(), emailEnteredEvent.getEmail());
     }
 }
