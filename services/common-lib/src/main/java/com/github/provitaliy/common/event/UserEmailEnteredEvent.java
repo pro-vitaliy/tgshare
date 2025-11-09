@@ -10,6 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserEmailEnteredEvent {
-    private Long userId;
+    private Long telegramUserId;
     private String email;
 }
