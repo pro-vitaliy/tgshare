@@ -41,7 +41,7 @@ public class FileUpdateHandler {
                 .fileName(telegramDocument.getFileName())
                 .mimeType(telegramDocument.getMimeType())
                 .fileSize(telegramDocument.getFileSize())
-                .ownerId(user.getId())
+                .telegramUserId(user.getTelegramUserId())
                 .build();
 
         processUpload(fileUploadEvent, user);
@@ -66,7 +66,7 @@ public class FileUpdateHandler {
                 .telegramFileId(telegramPhoto.getFileId())
                 .fileName("photo_" + telegramPhoto.getFileId() + ".jpg")
                 .fileSize(Long.valueOf(telegramPhoto.getFileSize()))
-                .ownerId(user.getId())
+                .telegramUserId(user.getTelegramUserId())
                 .build();
 
         processUpload(fileUploadEvent, user);
