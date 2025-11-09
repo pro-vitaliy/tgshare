@@ -4,6 +4,7 @@ import com.github.provitaliy.common.dto.AppUserCreateDTO;
 import com.github.provitaliy.common.event.UserEmailEnteredEvent;
 import com.github.provitaliy.common.grpc.AppUserResponse;
 import com.github.provitaliy.common.grpc.AppUserServiceGrpc;
+import com.github.provitaliy.common.grpc.TelegramUserIdRequest;
 import com.github.provitaliy.node.mapper.NodeUserMapper;
 import com.github.provitaliy.node.user.NodeUser;
 import com.github.provitaliy.node.user.UserState;
@@ -23,13 +24,22 @@ public class NodeUserService {
                 .orElseGet(() -> createAndCacheUser(userCreateDto));
     }
 
+    public NodeUser getByTelegramUserId(Long telegramUserId) {
+        return cacheService.findByTelegramId(telegramUserId)
+                .orElseGet(() -> fetchAndCacheUser(telegramUserId));
+    }
+
+    public void updateNodeUser(NodeUser nodeUser) {
+        cacheService.save(nodeUser);
+    }
+
     public void changeState(NodeUser nodeUser, UserState state) {
         nodeUser.setState(state);
         cacheService.save(nodeUser);
     }
 
     public void setEmail(NodeUser nodeUser, String email) {
-        var emailEnteredEvent = new UserEmailEnteredEvent(nodeUser.getId(), email);
+        var emailEnteredEvent = new UserEmailEnteredEvent(nodeUser.getTelegramUserId(), email);
         producerService.produceRegistrationMail(emailEnteredEvent);
     }
 
@@ -42,6 +52,20 @@ public class NodeUserService {
 
         NodeUser nodeUser = userMapper.fromGrpc(response);
         nodeUser.setState(UserState.BASIC_STATE);
+        cacheService.save(nodeUser);
+
+        return nodeUser;
+    }
+
+    private NodeUser fetchAndCacheUser(Long telegramUserId) {
+
+//        TODO: добавить ретраи, обработку сетевых ошибок, что делать если юзер не найден
+
+        TelegramUserIdRequest request = TelegramUserIdRequest.newBuilder()
+                .setTelegramUserId(telegramUserId)
+                .build();
+        AppUserResponse response = userServiceStub.getAppUserByTelegramId(request);
+        NodeUser nodeUser = userMapper.fromGrpc(response);
         cacheService.save(nodeUser);
 
         return nodeUser;
