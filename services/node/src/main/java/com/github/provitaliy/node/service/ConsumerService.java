@@ -1,8 +1,10 @@
 package com.github.provitaliy.node.service;
 
 import com.github.provitaliy.common.event.FileReadyEvent;
+import com.github.provitaliy.common.event.UserActivatedEvent;
 import com.github.provitaliy.common.messaging.QueueNames;
 import com.github.provitaliy.node.handler.FileUpdateHandler;
+import com.github.provitaliy.node.handler.NodeUserEventHandler;
 import com.github.provitaliy.node.handler.TextUpdateHandler;
 import com.github.provitaliy.node.handler.UserNotificationEventHandler;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +19,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public class ConsumerService {
     private final TextUpdateHandler textUpdateHandler;
     private final FileUpdateHandler fileUpdateHandler;
-    private UserNotificationEventHandler userNotificationEventHandler;
+    private final UserNotificationEventHandler userNotificationEventHandler;
+    private final NodeUserEventHandler userEventHandler;
 
     @RabbitListener(queues = QueueNames.TEXT_MESSAGE_UPDATE_QUEUE)
     public void consumeTextMessageUpdates(Update update) {
@@ -40,5 +43,11 @@ public class ConsumerService {
     @RabbitListener(queues = QueueNames.FILE_READY_QUEUE)
     public void consumeFileReadyEvent(FileReadyEvent event) {
         userNotificationEventHandler.handleFileReadyEvent(event.telegramUserId(), event.fileUrl());
+    }
+
+    @RabbitListener(queues = QueueNames.USER_ACTIVATED_QUEUE)
+    public void consumeUserActivationEvent(UserActivatedEvent event) {
+        userEventHandler.userActivatedEventHandler(event);
+//        TODO: опубликовать возможные исключение в DLQ
     }
 }
