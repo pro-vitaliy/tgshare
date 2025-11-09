@@ -1,6 +1,7 @@
 package com.github.provitaliy.userservice.service;
 
 import com.github.provitaliy.common.event.SendEmailEvent;
+import com.github.provitaliy.common.event.UserActivatedEvent;
 import com.github.provitaliy.common.messaging.ExchangeNames;
 import com.github.provitaliy.common.messaging.RoutingKeys;
 import lombok.RequiredArgsConstructor;
@@ -20,4 +21,11 @@ public class ProducerService {
         );
     }
 
+    public void produceUserActivatedEvent(UserActivatedEvent event) {
+        rabbitTemplate.convertAndSend(
+                ExchangeNames.MAIN,
+                RoutingKeys.ROUTING_KEY_USER_ACTIVATED,
+                event
+        );
+    }
 }
