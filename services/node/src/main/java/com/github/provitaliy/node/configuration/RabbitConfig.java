@@ -41,6 +41,11 @@ public class RabbitConfig {
     }
 
     @Bean
+    public Queue userActivatedQueue() {
+        return new Queue(QueueNames.USER_ACTIVATED_QUEUE);
+    }
+
+    @Bean
     public DirectExchange mainExchange() {
         return new DirectExchange(ExchangeNames.MAIN);
     }
@@ -77,4 +82,11 @@ public class RabbitConfig {
                 .with(RoutingKeys.ROUTING_KEY_FILE_READY);
     }
 
+    @Bean
+    public Binding userActivatedBinding() {
+        return BindingBuilder
+                .bind(userActivatedQueue())
+                .to(mainExchange())
+                .with(RoutingKeys.ROUTING_KEY_USER_ACTIVATED);
+    }
 }
