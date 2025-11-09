@@ -28,6 +28,11 @@ message AppUserResponse {
   google.protobuf.Timestamp first_login_date = 9;
 }
 
+message TelegramUserIdRequest {
+  int64 telegram_user_id = 1;
+}
+
 service AppUserService {
   rpc GetOrCreateAppUser(GetOrCreateAppUserRequest) returns (AppUserResponse);
+  rpc GetAppUserByTelegramId(TelegramUserIdRequest) returns (AppUserResponse);
 }
