@@ -9,5 +9,5 @@ public class RoutingKeys {
     public static final String ROUTING_KEY_EMAIL_SEND = "routing.email.send";
     public static final String ROUTING_KEY_FILE_UPLOAD_REQUEST = "routing.file.upload.request";
     public static final String ROUTING_KEY_FILE_READY = "routing.file.ready";
-
+    public static final String ROUTING_KEY_USER_ACTIVATED = "routing.user.activated";
 }
