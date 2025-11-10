@@ -1,18 +1,23 @@
 grpc:
   server:
-    port: 9090
+    port: ${USER_SERVICE_GRPC_PORT:9090}
 
 server:
-  port: 8087
+  port: ${USER_SERVICE_REST_PORT:8087}
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/tgsharedb
-    username: admin
-    password: ${DB_PASSWORD}
+    url: ${USER_SERVICE_DB_URL:jdbc:postgresql://localhost:5432/userservicedb}
+    username: ${USER_SERVICE_DB_USERNAME}
+    password: ${USER_SERVICE_DB_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
+  rabbitmq:
+    host: ${RABBIT_HOST:localhost}
+    port: ${RABBIT_PORT:5672}
+    username: ${RABBIT_USERNAME}
+    password: ${RABBIT_PASSWORD}
 
 salt: ${SALT:test}
 
