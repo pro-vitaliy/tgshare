@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmailConfirmationService {
     private final ProducerService producerService;
-    private final AppUserService userService;
     private final Encoder encoder;
 
     @Value("${service.user-activation.url}")
@@ -34,11 +33,6 @@ public class EmailConfirmationService {
 
         SendEmailEvent emailEvent = new SendEmailEvent(email, "Подтверждение почты", confirmationMessage);
         producerService.produceSendMailEvent(emailEvent);
-    }
-
-    public void confirmUserAccount(String encodedId) {
-        Long userId = encoder.decode(encodedId);
-        userService.activateUser(userId);
     }
 
     private String buildConfirmationLink(Long userId) {
