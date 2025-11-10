@@ -31,10 +31,10 @@ public class RabbitConfig {
     }
 
     @Bean
-    public Binding answerMessageBinding(Queue answerMessageQueue, DirectExchange mainExchange) {
+    public Binding answerMessageBinding() {
         return BindingBuilder
-                .bind(answerMessageQueue)
-                .to(mainExchange)
+                .bind(answerMessageQueue())
+                .to(mainExchange())
                 .with(RoutingKeys.ROUTING_KEY_ANSWER_MESSAGE);
     }
 }
