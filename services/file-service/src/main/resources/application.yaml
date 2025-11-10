@@ -6,7 +6,7 @@ spring:
   application:
     name: file-service
   datasource:
-    url: ${FILE_SERVICE_DB_URL}
+    url: ${FILE_SERVICE_DB_URL:jdbc:postgresql://localhost:5433/fileservicedb}
     username: ${FILE_SERVICE_DB_USERNAME}
     password: ${FILE_SERVICE_DB_PASSWORD}
   rabbitmq:
