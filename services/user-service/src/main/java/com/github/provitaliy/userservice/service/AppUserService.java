@@ -9,6 +9,7 @@ import com.github.provitaliy.userservice.exception.UserNotFoundException;
 import com.github.provitaliy.userservice.mapper.AppUserMapper;
 import com.github.provitaliy.userservice.repository.AppUserRepository;
 import com.github.provitaliy.userservice.service.email.EmailConfirmationService;
+import com.github.provitaliy.userservice.util.Encoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ public class AppUserService {
     private final AppUserMapper appUserMapper;
     private final EmailConfirmationService confirmationService;
     private final ProducerService producerService;
+    private final Encoder encoder;
 
     public AppUserDTO getOrCreateAppUser(AppUserCreateDTO appUserData) {
         return appUserRepository.findByTelegramUserId(appUserData.getTelegramUserId())
@@ -51,9 +53,10 @@ public class AppUserService {
         confirmationService.sendConfirmationEmail(appUser.getId(), email);
     }
 
-    public void activateUser(Long id) {
-        AppUser user = appUserRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException(id));
+    public void activateUser(String encodedId) {
+        Long userId = encoder.decode(encodedId);
+        AppUser user = appUserRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
 
         user.setEmail(user.getUnconfirmedEmail());
         user.setUnconfirmedEmail(null);
