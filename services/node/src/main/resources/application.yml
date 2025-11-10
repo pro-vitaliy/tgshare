@@ -15,18 +15,3 @@ spring:
     port: ${RABBIT_PORT:5672}
     username: ${RABBIT_USERNAME}
     password: ${RABBIT_PASSWORD}
-  datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-
-telegram:
-  bot:
-    token: ${TELEGRAM_BOT_TOKEN}
-  endpoints:
-    file-info: ${TG_BOT_FILE_INFO_URL}
-    file-storage: ${TG_BOT_FILE_STORAGE_URL}
-
