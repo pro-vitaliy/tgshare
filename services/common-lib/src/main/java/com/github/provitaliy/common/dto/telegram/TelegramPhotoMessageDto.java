@@ -4,6 +4,5 @@ public record TelegramPhotoMessageDto(
         Long chatId,
         TelegramUserDto from,
         String photoId,
-        String photoName,
         Long photoSize
 ) { }
