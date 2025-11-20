@@ -1,32 +1,29 @@
 package com.github.provitaliy.node.handler;
 
 import com.github.provitaliy.common.dto.AppUserCreateDTO;
+import com.github.provitaliy.common.dto.telegram.SendMessageDto;
+import com.github.provitaliy.common.dto.telegram.TelegramMessage;
+import com.github.provitaliy.common.dto.telegram.TelegramUserDto;
 import org.apache.commons.validator.routines.EmailValidator;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.User;
-import org.telegram.telegrambots.meta.api.objects.message.Message;
 
 final class HandlerUtils {
     private static final EmailValidator EMAIL_VALIDATOR = EmailValidator.getInstance();
 
     private HandlerUtils() {};
 
-    static AppUserCreateDTO buildUserCreateDto(Message telegramMessage) {
-        User telegramUser = telegramMessage.getFrom();
+    static AppUserCreateDTO buildUserCreateDto(TelegramMessage telegramMessage) {
+        TelegramUserDto telegramUser = telegramMessage.from();
         return AppUserCreateDTO.builder()
-                .telegramUserId(telegramUser.getId())
-                .chatId(telegramMessage.getChatId())
-                .firstName(telegramUser.getFirstName())
-                .lastName(telegramUser.getLastName())
-                .username(telegramUser.getUserName())
+                .telegramUserId(telegramUser.id())
+                .chatId(telegramMessage.chatId())
+                .firstName(telegramUser.firstName())
+                .lastName(telegramUser.lastName())
+                .username(telegramUser.username())
                 .build();
     }
 
-    static SendMessage prepareMessage(String text, Long chatId) {
-        return SendMessage.builder()
-                .chatId(chatId)
-                .text(text)
-                .build();
+    static SendMessageDto prepareSendMessage(String text, Long chatId) {
+        return new SendMessageDto(chatId, text);
     }
 
     static boolean isValidEmail(String email) {
