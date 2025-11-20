@@ -7,4 +7,4 @@ public record TelegramDocumentMessageDto(
         String documentName,
         String mimeType,
         Long documentSize
-) { }
+) implements TelegramMessage { }

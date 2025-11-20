@@ -5,4 +5,4 @@ public record TelegramPhotoMessageDto(
         TelegramUserDto from,
         String photoId,
         Long photoSize
-) { }
+) implements TelegramMessage { }
