@@ -1,5 +1,8 @@
 package com.github.provitaliy.node.service;
 
+import com.github.provitaliy.common.dto.telegram.TelegramDocumentMessageDto;
+import com.github.provitaliy.common.dto.telegram.TelegramPhotoMessageDto;
+import com.github.provitaliy.common.dto.telegram.TelegramTextMessageDto;
 import com.github.provitaliy.common.event.FileReadyEvent;
 import com.github.provitaliy.common.event.UserActivatedEvent;
 import com.github.provitaliy.common.messaging.QueueNames;
@@ -11,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -23,21 +25,21 @@ public class ConsumerService {
     private final NodeUserEventHandler userEventHandler;
 
     @RabbitListener(queues = QueueNames.TEXT_MESSAGE_UPDATE_QUEUE)
-    public void consumeTextMessageUpdates(Update update) {
+    public void consumeTextMessageUpdates(TelegramTextMessageDto textMessage) {
         log.debug("NODE: Text message is received");
-        textUpdateHandler.handleUpdate(update);
+        textUpdateHandler.handleUpdate(textMessage);
     }
 
     @RabbitListener(queues = QueueNames.DOC_MESSAGE_UPDATE_QUEUE)
-    public void consumeDocMessageUpdates(Update update) {
+    public void consumeDocMessageUpdates(TelegramDocumentMessageDto docMessage) {
         log.debug("NODE: Doc message is received");
-        fileUpdateHandler.handleDocUpdate(update);
+        fileUpdateHandler.handleDocUpdate(docMessage);
     }
 
     @RabbitListener(queues = QueueNames.PHOTO_MESSAGE_UPDATE_QUEUE)
-    public void consumePhotoMessageUpdates(Update update) {
+    public void consumePhotoMessageUpdates(TelegramPhotoMessageDto photoMessage) {
         log.debug("NODE: Photo message is received");
-        fileUpdateHandler.handlePhotoUpdate(update);
+        fileUpdateHandler.handlePhotoUpdate(photoMessage);
     }
 
     @RabbitListener(queues = QueueNames.FILE_READY_QUEUE)
