@@ -1,5 +1,10 @@
 package com.github.provitaliy.dispatcher.controller;
 
+import com.github.provitaliy.common.dto.telegram.SendMessageDto;
+import com.github.provitaliy.common.dto.telegram.TelegramDocumentMessageDto;
+import com.github.provitaliy.common.dto.telegram.TelegramPhotoMessageDto;
+import com.github.provitaliy.common.dto.telegram.TelegramTextMessageDto;
+import com.github.provitaliy.dispatcher.mapper.TelegramMessageMapper;
 import com.github.provitaliy.dispatcher.service.UpdateProducer;
 import com.github.provitaliy.dispatcher.utils.MessageUtils;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +22,7 @@ public class UpdateController {
     private final TelegramClient telegramClient;
     private final UpdateProducer updateProducer;
     private final MessageUtils messageUtils;
+    private final TelegramMessageMapper messageMapper;
 
     public void processUpdate(Update update) {
         if (update == null) {
@@ -34,12 +40,16 @@ public class UpdateController {
 
     private void distributeMessagesByType(Update update) {
         var message = update.getMessage();
+
         if (message.hasText()) {
-            updateProducer.produceTextMessageUpdate(update);
+            TelegramTextMessageDto textMessageDto = messageMapper.toTextMessageDto(message);
+            updateProducer.produceTextMessageUpdate(textMessageDto);
         } else if (message.hasDocument()) {
-            updateProducer.produceDocMessageUpdate(update);
+            TelegramDocumentMessageDto docMessageDto = messageMapper.toDocumentMessageDto(message);
+            updateProducer.produceDocMessageUpdate(docMessageDto);
         } else if (message.hasPhoto()) {
-            updateProducer.producePhotoMessageUpdate(update);
+            TelegramPhotoMessageDto photoMessageDto = messageMapper.toPhotoMessageDto(message);
+            updateProducer.producePhotoMessageUpdate(photoMessageDto);
         } else {
             setUnsupportedTypeView(update);
         }
@@ -56,5 +66,9 @@ public class UpdateController {
         } catch (TelegramApiException e) {
             log.error("Error sending message", e);
         }
+    }
+
+    public void setView(SendMessageDto sendMessageDto) {
+        setView(messageMapper.toSendMessage(sendMessageDto));
     }
 }
