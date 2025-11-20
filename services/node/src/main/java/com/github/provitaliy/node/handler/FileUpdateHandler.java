@@ -1,5 +1,8 @@
 package com.github.provitaliy.node.handler;
 
+import com.github.provitaliy.common.dto.telegram.SendMessageDto;
+import com.github.provitaliy.common.dto.telegram.TelegramDocumentMessageDto;
+import com.github.provitaliy.common.dto.telegram.TelegramPhotoMessageDto;
 import com.github.provitaliy.common.event.FileUploadEvent;
 import com.github.provitaliy.node.bot.BotResponse;
 import com.github.provitaliy.node.service.NodeUserService;
@@ -8,11 +11,6 @@ import com.github.provitaliy.node.user.NodeUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Document;
-import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.message.Message;
-import org.telegram.telegrambots.meta.api.objects.photo.PhotoSize;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -21,51 +19,45 @@ public class FileUpdateHandler {
     private final NodeUserService userService;
     private final ProducerService producerService;
 
-    public void handleDocUpdate(Update update) {
-        Message message = update.getMessage();
-
-        if (message == null || message.getDocument() == null) {
-            log.warn("Received update without document: {}", update);
+    public void handleDocUpdate(TelegramDocumentMessageDto docMessage) {
+        if (docMessage == null || docMessage.documentId() == null) {
+            log.warn("Received message without document: {}", docMessage);
             return;
         }
 
-        NodeUser user = userService.getOrCreateAppUser(HandlerUtils.buildUserCreateDto(message));
+        NodeUser user = userService.getOrCreateAppUser(HandlerUtils.buildUserCreateDto(docMessage));
         if (!user.getIsActive()) {
             processForbiddenAnswer(user);
             return;
         }
 
-        Document telegramDocument = message.getDocument();
         FileUploadEvent fileUploadEvent = FileUploadEvent.builder()
-                .telegramFileId(telegramDocument.getFileId())
-                .fileName(telegramDocument.getFileName())
-                .mimeType(telegramDocument.getMimeType())
-                .fileSize(telegramDocument.getFileSize())
+                .telegramFileId(docMessage.documentId())
+                .fileName(docMessage.documentName())
+                .mimeType(docMessage.mimeType())
+                .fileSize(docMessage.documentSize())
                 .telegramUserId(user.getTelegramUserId())
                 .build();
 
         processUpload(fileUploadEvent, user);
     }
 
-    public void handlePhotoUpdate(Update update) {
-        Message message = update.getMessage();
-
-        if (message == null || message.getPhoto() == null || message.getPhoto().isEmpty()) {
-            log.warn("Received update without photo: {}", update);
+    public void handlePhotoUpdate(TelegramPhotoMessageDto photoMessage) {
+        if (photoMessage == null || photoMessage.photoId() == null || photoMessage.photoId().isEmpty()) {
+            log.warn("Received message without photo: {}", photoMessage);
             return;
         }
 
-        NodeUser user = userService.getOrCreateAppUser(HandlerUtils.buildUserCreateDto(message));
+        NodeUser user = userService.getOrCreateAppUser(HandlerUtils.buildUserCreateDto(photoMessage));
         if (!user.getIsActive()) {
             processForbiddenAnswer(user);
             return;
         }
 
-        PhotoSize telegramPhoto = message.getPhoto().getLast();
         FileUploadEvent fileUploadEvent = FileUploadEvent.builder()
-                .telegramFileId(telegramPhoto.getFileId())
-                .fileName("photo_" + telegramPhoto.getFileId() + ".jpg")
-                .fileSize(Long.valueOf(telegramPhoto.getFileSize()))
+                .telegramFileId(photoMessage.photoId())
+                .fileName("photo_" + photoMessage.photoId() + ".jpg")
+                .fileSize(photoMessage.photoSize())
                 .telegramUserId(user.getTelegramUserId())
                 .build();
 
@@ -74,12 +66,12 @@ public class FileUpdateHandler {
 
     private void processUpload(FileUploadEvent event, NodeUser user) {
         producerService.produceFileUploadRequest(event);
-        SendMessage answerMessage = HandlerUtils.prepareMessage(BotResponse.FILE_RECEIVED_RESPONSE, user.getChatId());
+        SendMessageDto answerMessage = HandlerUtils.prepareSendMessage(BotResponse.FILE_RECEIVED_RESPONSE, user.getChatId());
         producerService.produceAnswer(answerMessage);
     }
 
     private void processForbiddenAnswer(NodeUser user) {
-        SendMessage forbiddenAnswer = HandlerUtils.prepareMessage(BotResponse.NOT_ALLOW_TO_SEND_FILE_RESPONSE,
+        SendMessageDto forbiddenAnswer = HandlerUtils.prepareSendMessage(BotResponse.NOT_ALLOW_TO_SEND_FILE_RESPONSE,
                 user.getChatId());
         producerService.produceAnswer(forbiddenAnswer);
     }
