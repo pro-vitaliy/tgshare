@@ -58,11 +58,6 @@
             <version>1.76.0</version>
         </dependency>
         <dependency>
-            <groupId>org.telegram</groupId>
-            <artifactId>telegrambots-meta</artifactId>
-            <version>${telegrambots.meta.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
             <version>${org.mapstruct.version}</version>
