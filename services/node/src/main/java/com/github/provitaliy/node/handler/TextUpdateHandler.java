@@ -1,5 +1,7 @@
 package com.github.provitaliy.node.handler;
 
+import com.github.provitaliy.common.dto.telegram.SendMessageDto;
+import com.github.provitaliy.common.dto.telegram.TelegramTextMessageDto;
 import com.github.provitaliy.node.bot.BotResponse;
 import com.github.provitaliy.node.bot.ServiceCommand;
 import com.github.provitaliy.node.service.NodeUserService;
@@ -9,9 +11,6 @@ import com.github.provitaliy.node.user.UserState;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.message.Message;
 
 import static com.github.provitaliy.node.bot.ServiceCommand.CANCEL;
 import static com.github.provitaliy.node.user.UserState.BASIC_STATE;
@@ -24,18 +23,16 @@ public class TextUpdateHandler {
     private final NodeUserService userService;
     private final ProducerService producerService;
 
-    public void handleUpdate(Update update) {
-        Message message = update.getMessage();
-
-        if (message == null || message.getText() == null) {
-            log.warn("Received update without text: {}", update);
+    public void handleUpdate(TelegramTextMessageDto textMessage) {
+        if (textMessage == null || textMessage.text() == null) {
+            log.warn("Received textMessage without text: {}", textMessage);
             return;
         }
 
-        NodeUser user = userService.getOrCreateAppUser(HandlerUtils.buildUserCreateDto(message));
+        NodeUser user = userService.getOrCreateAppUser(HandlerUtils.buildUserCreateDto(textMessage));
         UserState userState = user.getState();
 
-        String messageText = message.getText();
+        String messageText = textMessage.text();
         ServiceCommand command = ServiceCommand.fromValue(messageText);
         String answer;
 
@@ -50,7 +47,7 @@ public class TextUpdateHandler {
             answer = "Неизвестная ошибка. Введите /cancel и попробуйте снова";
         }
 
-        SendMessage answerMessage = HandlerUtils.prepareMessage(answer, user.getChatId());
+        SendMessageDto answerMessage = HandlerUtils.prepareSendMessage(answer, user.getChatId());
         producerService.produceAnswer(answerMessage);
     }
 
