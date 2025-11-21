@@ -21,7 +21,6 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 public class UpdateController {
     private final TelegramClient telegramClient;
     private final UpdateProducer updateProducer;
-    private final MessageUtils messageUtils;
     private final TelegramMessageMapper messageMapper;
 
     public void processUpdate(Update update) {
@@ -36,6 +35,20 @@ public class UpdateController {
             log.error("Unsupported update type {}", update);
             setUnsupportedTypeView(update);
         }
+    }
+
+    public void setView(SendMessage sendMessage) {
+        try {
+            telegramClient.execute(sendMessage);
+        } catch (TelegramApiException e) {
+            log.error("TelegramApiException sending message: {}", sendMessage, e);
+        } catch (Exception e) {
+            log.error("Unexpected error sending message: {}", sendMessage, e);
+        }
+    }
+
+    public void setView(SendMessageDto sendMessageDto) {
+        setView(messageMapper.toSendMessage(sendMessageDto));
     }
 
     private void distributeMessagesByType(Update update) {
@@ -56,19 +69,7 @@ public class UpdateController {
     }
 
     private void setUnsupportedTypeView(Update update) {
-        var sendMessage = messageUtils.generateSendMessageWithText(update, "Неподдерживаемый тип сообщения");
+        var sendMessage = MessageUtils.generateSendMessageWithText(update, "Неподдерживаемый тип сообщения");
         setView(sendMessage);
-    }
-
-    public void setView(SendMessage sendMessage) {
-        try {
-            telegramClient.execute(sendMessage);
-        } catch (TelegramApiException e) {
-            log.error("Error sending message", e);
-        }
-    }
-
-    public void setView(SendMessageDto sendMessageDto) {
-        setView(messageMapper.toSendMessage(sendMessageDto));
     }
 }
