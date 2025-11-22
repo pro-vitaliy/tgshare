@@ -1,15 +1,14 @@
 package com.github.provitaliy.node.handler;
 
 import com.github.provitaliy.common.dto.AppUserCreateDTO;
-import com.github.provitaliy.common.dto.telegram.SendMessageDto;
 import com.github.provitaliy.common.dto.telegram.TelegramMessage;
 import com.github.provitaliy.common.dto.telegram.TelegramUserDto;
+import lombok.experimental.UtilityClass;
 import org.apache.commons.validator.routines.EmailValidator;
 
+@UtilityClass
 final class HandlerUtils {
     private static final EmailValidator EMAIL_VALIDATOR = EmailValidator.getInstance();
-
-    private HandlerUtils() {};
 
     static AppUserCreateDTO buildUserCreateDto(TelegramMessage telegramMessage) {
         TelegramUserDto telegramUser = telegramMessage.from();
@@ -20,10 +19,6 @@ final class HandlerUtils {
                 .lastName(telegramUser.lastName())
                 .username(telegramUser.username())
                 .build();
-    }
-
-    static SendMessageDto prepareSendMessage(String text, Long chatId) {
-        return new SendMessageDto(chatId, text);
     }
 
     static boolean isValidEmail(String email) {
