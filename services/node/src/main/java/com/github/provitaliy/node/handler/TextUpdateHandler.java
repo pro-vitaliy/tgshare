@@ -1,11 +1,12 @@
 package com.github.provitaliy.node.handler;
 
-import com.github.provitaliy.common.dto.telegram.SendMessageDto;
 import com.github.provitaliy.common.dto.telegram.TelegramTextMessageDto;
 import com.github.provitaliy.node.bot.BotResponse;
 import com.github.provitaliy.node.bot.ServiceCommand;
+import com.github.provitaliy.node.exception.NodeInternalProcessingException;
 import com.github.provitaliy.node.service.NodeUserService;
 import com.github.provitaliy.node.service.ProducerService;
+import com.github.provitaliy.node.service.UserResponseService;
 import com.github.provitaliy.node.user.NodeUser;
 import com.github.provitaliy.node.user.UserState;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import static com.github.provitaliy.node.user.UserState.WAIT_FOR_EMAIL_STATE;
 public class TextUpdateHandler {
     private final NodeUserService userService;
     private final ProducerService producerService;
+    private final UserResponseService userResponseService;
 
     public void handleUpdate(TelegramTextMessageDto textMessage) {
         if (textMessage == null || textMessage.text() == null) {
@@ -44,11 +46,10 @@ public class TextUpdateHandler {
             answer = setEmail(user, messageText);
         } else {
             log.error("Unknown user state: {}", userState);
-            answer = "Неизвестная ошибка. Введите /cancel и попробуйте снова";
+            throw new NodeInternalProcessingException("Unknown user state: " + userState);
         }
 
-        SendMessageDto answerMessage = HandlerUtils.prepareSendMessage(answer, user.getChatId());
-        producerService.produceAnswer(answerMessage);
+        userResponseService.sendUserResponse(user.getChatId(), answer);
     }
 
     private String processServiceCommand(NodeUser nodeUser, ServiceCommand command) {
