@@ -5,11 +5,21 @@ import com.github.provitaliy.common.event.UserEmailEnteredEvent;
 import com.github.provitaliy.common.grpc.AppUserResponse;
 import com.github.provitaliy.common.grpc.AppUserServiceGrpc;
 import com.github.provitaliy.common.grpc.TelegramUserIdRequest;
+import com.github.provitaliy.node.exception.NodeInternalProcessingException;
+import com.github.provitaliy.node.exception.RetryableGrpcException;
+import com.github.provitaliy.node.exception.UserServiceProcessingException;
+import com.github.provitaliy.node.exception.UserServiceUnavailableException;
 import com.github.provitaliy.node.mapper.NodeUserMapper;
 import com.github.provitaliy.node.user.NodeUser;
 import com.github.provitaliy.node.user.UserState;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+
+import java.util.function.Supplier;
 
 @RequiredArgsConstructor
 @Service
@@ -29,10 +39,6 @@ public class NodeUserService {
                 .orElseGet(() -> fetchAndCacheUser(telegramUserId));
     }
 
-    public void updateNodeUser(NodeUser nodeUser) {
-        cacheService.save(nodeUser);
-    }
-
     public void changeState(NodeUser nodeUser, UserState state) {
         nodeUser.setState(state);
         cacheService.save(nodeUser);
@@ -44,30 +50,62 @@ public class NodeUserService {
     }
 
     private NodeUser createAndCacheUser(AppUserCreateDTO userCreateDto) {
+        try {
+            var request = userMapper.toGrpc(userCreateDto);
+            AppUserResponse response = callWithRetry(() -> userServiceStub.getOrCreateAppUser(request));
 
-//        TODO: добавить ретраи, обработку сетевых ошибок
+            NodeUser nodeUser = userMapper.fromGrpc(response);
+            nodeUser.setState(UserState.BASIC_STATE);
+            cacheService.save(nodeUser);
 
-        var request = userMapper.toGrpc(userCreateDto);
-        AppUserResponse response = userServiceStub.getOrCreateAppUser(request);
-
-        NodeUser nodeUser = userMapper.fromGrpc(response);
-        nodeUser.setState(UserState.BASIC_STATE);
-        cacheService.save(nodeUser);
-
-        return nodeUser;
+            return nodeUser;
+        } catch (Exception e) {
+            throw mapException(e);
+        }
     }
 
     private NodeUser fetchAndCacheUser(Long telegramUserId) {
+        try {
+            TelegramUserIdRequest request = TelegramUserIdRequest.newBuilder()
+                    .setTelegramUserId(telegramUserId)
+                    .build();
+            AppUserResponse response = callWithRetry(() -> userServiceStub.getAppUserByTelegramId(request));
 
-//        TODO: добавить ретраи, обработку сетевых ошибок, что делать если юзер не найден
+            NodeUser nodeUser = userMapper.fromGrpc(response);
+            cacheService.save(nodeUser);
+            return nodeUser;
 
-        TelegramUserIdRequest request = TelegramUserIdRequest.newBuilder()
-                .setTelegramUserId(telegramUserId)
-                .build();
-        AppUserResponse response = userServiceStub.getAppUserByTelegramId(request);
-        NodeUser nodeUser = userMapper.fromGrpc(response);
-        cacheService.save(nodeUser);
+        } catch (Exception e) {
+            throw mapException(e);
+        }
+    }
 
-        return nodeUser;
+    @Retryable(
+            retryFor = RetryableGrpcException.class,
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 300)
+    )
+    private <T> T callWithRetry(Supplier<T> action) {
+        try {
+            return action.get();
+        } catch (StatusRuntimeException e) {
+            Status.Code code = e.getStatus().getCode();
+            switch (code) {
+                case UNAVAILABLE, DEADLINE_EXCEEDED, RESOURCE_EXHAUSTED -> {
+                    throw new RetryableGrpcException("Retryable GRPC error: " + code);
+                }
+                default -> throw e;
+            }
+        }
+    }
+
+    private RuntimeException mapException(Exception e) {
+        if (e instanceof RetryableGrpcException) {
+            return new UserServiceUnavailableException("User service unavailable", e);
+        }
+        if (e instanceof StatusRuntimeException sre) {
+            return new UserServiceProcessingException("User service error: " + sre.getStatus(), e);
+        }
+        return new NodeInternalProcessingException("Unexpected error in user service", e);
     }
 }
