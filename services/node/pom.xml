@@ -30,6 +30,8 @@
         <java.version>24</java.version>
         <telegrambots.meta.version>9.2.0</telegrambots.meta.version>
         <org.mapstruct.version>1.6.3</org.mapstruct.version>
+        <org.springframework.retry.version>2.0.12</org.springframework.retry.version>
+        <org.springframework.aspects.version>7.0.1</org.springframework.aspects.version>
     </properties>
     <dependencies>
         <dependency>
@@ -40,7 +42,20 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.retry</groupId>
+            <artifactId>spring-retry</artifactId>
+            <version>${org.springframework.retry.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
+            <version>${org.springframework.aspects.version}</version>
+        </dependency>
         <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-netty-shaded</artifactId>
