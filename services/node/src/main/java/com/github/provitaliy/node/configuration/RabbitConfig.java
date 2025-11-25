@@ -7,6 +7,7 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.QueueBuilder;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +20,8 @@ public class RabbitConfig {
     public MessageConverter messageConverter() {
         return new Jackson2JsonMessageConverter();
     }
+
+//    --------------- Queues ----------------
 
     @Bean
     public Queue textMessageQueue() {
@@ -37,18 +40,28 @@ public class RabbitConfig {
 
     @Bean
     public Queue fileReadyQueue() {
-        return new Queue(QueueNames.FILE_READY_QUEUE);
+        return QueueBuilder.durable(QueueNames.FILE_READY_QUEUE)
+                .withArgument("x-dead-letter-exchange", ExchangeNames.DLQ)
+                .withArgument("x-dead-letter-routing-key", RoutingKeys.ROUTING_KEY_FILE_READY_DLQ)
+                .build();
     }
 
     @Bean
     public Queue userActivatedQueue() {
-        return new Queue(QueueNames.USER_ACTIVATED_QUEUE);
+        return QueueBuilder.durable(QueueNames.USER_ACTIVATED_QUEUE)
+                .withArgument("x-dead-letter-exchange", ExchangeNames.DLQ)
+                .withArgument("x-dead-letter-routing-key", RoutingKeys.ROUTING_KEY_USER_ACTIVATED_DLQ)
+                .build();
     }
+
+//    --------------- Exchanges ----------------
 
     @Bean
     public DirectExchange mainExchange() {
         return new DirectExchange(ExchangeNames.MAIN);
     }
+
+//    --------------- Bindings ----------------
 
     @Bean
     public Binding textMessageBinding() {
