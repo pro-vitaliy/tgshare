@@ -41,7 +41,6 @@ public class AppUserService {
 
     public void updateUnconfirmedEmail(Long telegramUserId, String email) {
         if (appUserRepository.existsByEmail(email)) {
-//            TODO: не забыть сделать обработчики этих исколючений в ноде
             throw new EmailAlreadyTakenException(email);
         }
 

@@ -10,7 +10,7 @@ import com.github.provitaliy.userservice.mapper.AppUserGrpcMapper;
 import com.github.provitaliy.userservice.service.AppUserService;
 import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
-import org.springframework.grpc.server.service.GrpcService;
+import net.devh.boot.grpc.server.service.GrpcService;
 
 @RequiredArgsConstructor
 @GrpcService
@@ -27,8 +27,6 @@ public class AppUserGrpcService extends AppUserServiceGrpc.AppUserServiceImplBas
 
         responseObserver.onNext(response);
         responseObserver.onCompleted();
-
-//        TODO: добавить catch блоки для отлова исключений и отправки соответствующих статусов в ответ
     }
 
     @Override
@@ -38,7 +36,5 @@ public class AppUserGrpcService extends AppUserServiceGrpc.AppUserServiceImplBas
 
         responseObserver.onNext(response);
         responseObserver.onCompleted();
-
-//        TODO: добавить catch блоки для отлова исключений и отправки соответствующих статусов в ответ
     }
 }
