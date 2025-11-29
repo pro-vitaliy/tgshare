@@ -54,6 +54,11 @@ public class RabbitConfig {
                 .build();
     }
 
+    @Bean
+    public Queue emailAlreadyTakenQueue() {
+        return new Queue(QueueNames.EMAIL_ALREADY_TAKEN_QUEUE);
+    }
+
 //    --------------- Exchanges ----------------
 
     @Bean
@@ -101,5 +106,13 @@ public class RabbitConfig {
                 .bind(userActivatedQueue())
                 .to(mainExchange())
                 .with(RoutingKeys.ROUTING_KEY_USER_ACTIVATED);
+    }
+
+    @Bean
+    public Binding emailAlreadyTakenBinding() {
+        return BindingBuilder
+                .bind(emailAlreadyTakenQueue())
+                .to(mainExchange())
+                .with(RoutingKeys.ROUTING_KEY_EMAIL_ALREADY_TAKEN);
     }
 }
