@@ -3,6 +3,7 @@ package com.github.provitaliy.node.service;
 import com.github.provitaliy.common.dto.telegram.TelegramDocumentMessageDto;
 import com.github.provitaliy.common.dto.telegram.TelegramPhotoMessageDto;
 import com.github.provitaliy.common.dto.telegram.TelegramTextMessageDto;
+import com.github.provitaliy.common.event.EmailAlreadyTakenEvent;
 import com.github.provitaliy.common.event.FileReadyEvent;
 import com.github.provitaliy.common.event.UserActivatedEvent;
 import com.github.provitaliy.common.messaging.QueueNames;
@@ -51,6 +52,11 @@ public class ConsumerService {
 
     @RabbitListener(queues = QueueNames.USER_ACTIVATED_QUEUE)
     public void consumeUserActivationEvent(UserActivatedEvent event) {
+        userDomainEventHandler.handle(event);
+    }
+
+    @RabbitListener(queues = QueueNames.EMAIL_ALREADY_TAKEN_QUEUE)
+    public void consumeEmailAlreadyTakenEvent(EmailAlreadyTakenEvent event) {
         userDomainEventHandler.handle(event);
     }
 }
