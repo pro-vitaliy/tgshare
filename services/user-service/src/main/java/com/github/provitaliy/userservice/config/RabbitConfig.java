@@ -7,6 +7,7 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.QueueBuilder;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +23,10 @@ public class RabbitConfig {
 
     @Bean
     public Queue userEmailEnteredQueue() {
-        return new Queue(QueueNames.USER_EMAIL_ENTERED_QUEUE);
+        return QueueBuilder.durable(QueueNames.USER_EMAIL_ENTERED_QUEUE)
+                .withArgument("x-dead-letter-exchange", ExchangeNames.DLQ)
+                .withArgument("x-dead-letter-routing-key", RoutingKeys.ROUTING_KEY_USER_EMAIL_ENTERED_DLQ)
+                .build();
     }
 
     @Bean
