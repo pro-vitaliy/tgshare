@@ -2,9 +2,9 @@ package com.github.provitaliy.userservice.service;
 
 import com.github.provitaliy.common.dto.AppUserCreateDTO;
 import com.github.provitaliy.common.dto.AppUserDTO;
+import com.github.provitaliy.common.event.EmailAlreadyTakenEvent;
 import com.github.provitaliy.common.event.UserActivatedEvent;
 import com.github.provitaliy.userservice.entity.AppUser;
-import com.github.provitaliy.userservice.exception.EmailAlreadyTakenException;
 import com.github.provitaliy.userservice.exception.UserNotFoundException;
 import com.github.provitaliy.userservice.mapper.AppUserMapper;
 import com.github.provitaliy.userservice.repository.AppUserRepository;
@@ -41,11 +41,15 @@ public class AppUserService {
 
     public void updateUnconfirmedEmail(Long telegramUserId, String email) {
         if (appUserRepository.existsByEmail(email)) {
-            throw new EmailAlreadyTakenException(email);
+            var emailAlreadyTakenEvent = new EmailAlreadyTakenEvent(telegramUserId, email);
+            producerService.produceEmailAlreadyTakenEvent(emailAlreadyTakenEvent);
+            return;
         }
 
         AppUser appUser = appUserRepository.findByTelegramUserId(telegramUserId)
-                .orElseThrow(() -> new UserNotFoundException(telegramUserId));
+                .orElseThrow(() -> new UserNotFoundException(
+                        "User with telegram ID " + telegramUserId +
+                        " not found during email update"));
 
         appUser.setUnconfirmedEmail(email);
         appUserRepository.save(appUser);
