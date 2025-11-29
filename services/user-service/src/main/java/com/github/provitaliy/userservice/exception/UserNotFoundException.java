@@ -5,4 +5,8 @@ public class UserNotFoundException extends RuntimeException {
     public UserNotFoundException(Long telegramUserId) {
         super("User not found for telegramUserId = " + telegramUserId);
     }
+
+    public UserNotFoundException(String message) {
+        super(message);
+    }
 }
