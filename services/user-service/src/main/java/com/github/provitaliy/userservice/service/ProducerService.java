@@ -1,5 +1,6 @@
 package com.github.provitaliy.userservice.service;
 
+import com.github.provitaliy.common.event.EmailAlreadyTakenEvent;
 import com.github.provitaliy.common.event.SendEmailEvent;
 import com.github.provitaliy.common.event.UserActivatedEvent;
 import com.github.provitaliy.common.messaging.ExchangeNames;
@@ -25,6 +26,14 @@ public class ProducerService {
         rabbitTemplate.convertAndSend(
                 ExchangeNames.MAIN,
                 RoutingKeys.ROUTING_KEY_USER_ACTIVATED,
+                event
+        );
+    }
+
+    public void produceEmailAlreadyTakenEvent(EmailAlreadyTakenEvent event) {
+        rabbitTemplate.convertAndSend(
+                ExchangeNames.MAIN,
+                RoutingKeys.ROUTING_KEY_EMAIL_ALREADY_TAKEN,
                 event
         );
     }
