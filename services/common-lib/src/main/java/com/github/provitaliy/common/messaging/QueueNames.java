@@ -10,10 +10,10 @@ public class QueueNames {
     public static final String USER_EMAIL_ENTERED_QUEUE = "rabbit.user.email.entered.queue";
     public static final String USER_EMAIL_ENTERED_DLQ = "rabbit.user.email.entered.dlq";
     public static final String EMAIL_ALREADY_TAKEN_QUEUE = "rabbit.email.already.taken.queue";
-
     public static final String EMAIL_SEND_QUEUE = "rabbit.email.send.queue";
-    public static final String FILE_UPLOAD_REQUEST_QUEUE = "rabbit.file.upload.request.queue";
 
+    public static final String FILE_UPLOAD_REQUEST_QUEUE = "rabbit.file.upload.request.queue";
+    public static final String FiLE_UPLOAD_FAILED_QUEUE = "rabbit.file.upload.failed.queue";
     public static final String FILE_READY_QUEUE = "rabbit.file.ready.queue";
     public static final String FILE_READY_DLQ = "rabbit.file.ready.dlq";
 
