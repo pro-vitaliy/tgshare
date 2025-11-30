@@ -21,20 +21,22 @@ public class MinioStorageService {
     private final MinioClient minioClient;
     private final MinioProperties props;
 
-    public String uploadFile(byte[] fileBytes, String originalName, String contentType) {
-        try (ByteArrayInputStream bais = new ByteArrayInputStream(fileBytes)) {
-            String fileName = UUID.randomUUID() + "_" + originalName;
+    public String uploadFile(InputStream is, Long size, String origName, String mimeType) {
+        try {
+            String fileName = UUID.randomUUID() + "_" + origName;
 
             minioClient.putObject(
                     PutObjectArgs.builder()
                             .bucket(props.getBucket())
                             .object(fileName)
-                            .stream(bais, fileBytes.length, -1)
-                            .contentType(contentType)
+                            .stream(is, size, -1)
+                            .contentType(mimeType)
                             .build()
             );
+
             log.info("Файл '{}' успешно загружен в bucket '{}'", fileName, props.getBucket());
             return fileName;
+
         } catch (Exception e) {
             log.error("Ошибка при загрузке файла в MinIO", e);
             throw new MinioStorageException("Не удалось сохранить файл в MinIO", e);
