@@ -2,6 +2,7 @@ package com.github.provitaliy.fileservice.service.file;
 
 import com.github.provitaliy.fileservice.entity.FileMetadata;
 import com.github.provitaliy.fileservice.exception.FileMetadataNotFoundException;
+import com.github.provitaliy.fileservice.exception.MetadataSaveException;
 import com.github.provitaliy.fileservice.repository.FileMetadataRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,23 +32,26 @@ public class FileMetadataService {
             String objectName,
             Duration ttl
     ) {
-        String uuid = UUID.randomUUID().toString();
-        Instant uploadedAt = Instant.now();
-        Instant expiresAt = uploadedAt.plus(ttl);
-        FileMetadata metadata = FileMetadata.builder()
-                .ownerId(ownerId)
-                .fileName(fileName)
-                .mimeType(mimeType)
-                .fileSize(fileSize)
-                .bucket(bucket)
-                .objectName(objectName)
-                .uploadedAt(uploadedAt)
-                .expiresAt(expiresAt)
-                .build();
+        try {
+            String uuid = UUID.randomUUID().toString();
+            Instant uploadedAt = Instant.now();
+            Instant expiresAt = uploadedAt.plus(ttl);
+            FileMetadata metadata = FileMetadata.builder()
+                    .ownerId(ownerId)
+                    .fileName(fileName)
+                    .mimeType(mimeType)
+                    .fileSize(fileSize)
+                    .bucket(bucket)
+                    .objectName(objectName)
+                    .uploadedAt(uploadedAt)
+                    .expiresAt(expiresAt)
+                    .build();
 
-        repository.save(metadata);
-        log.info("Сохранена метадата файла: uuid={}, fileName={}", uuid, fileName);
-        return metadata;
+            return repository.save(metadata);
+        } catch (Exception e) {
+            log.error("Ошибка при сохранении метаданных файла: fileName={}", fileName, e);
+            throw new MetadataSaveException(objectName, e);
+        }
     }
 
     public void deleteMetadata(Long id) {
