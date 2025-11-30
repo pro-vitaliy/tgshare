@@ -2,13 +2,16 @@ package com.github.provitaliy.fileservice.service.file;
 
 import com.github.provitaliy.common.event.FileReadyEvent;
 import com.github.provitaliy.common.event.FileUploadEvent;
+import com.github.provitaliy.common.event.FileUploadFailedEvent;
 import com.github.provitaliy.fileservice.config.MinioProperties;
 import com.github.provitaliy.fileservice.entity.FileMetadata;
+import com.github.provitaliy.fileservice.exception.MetadataSaveException;
 import com.github.provitaliy.fileservice.service.event.ProducerService;
 import com.github.provitaliy.fileservice.util.FileLinkGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.InputStream;
 import java.time.Duration;
 
 @RequiredArgsConstructor
@@ -22,12 +25,32 @@ public class FileProcessingService {
     private final ProducerService producerService;
 
     public void handleFileUpload(FileUploadEvent event) {
+        try (InputStream is = downloadFileService.downloadFileById(event.getTelegramFileId())) {
+            String objectName = storeFileAndGetObjectName(is, event);
+            FileMetadata metadata = saveFileMetadata(event, objectName);
+            String downloadLink = linkGenerator.generateLink(metadata.getUuid());
 
-//        TODO: заменить byte[] на потоковую передачу файлов из телеграмма в минио
+            FileReadyEvent readyEvent = new FileReadyEvent(event.getTelegramUserId(), downloadLink);
+            producerService.produceFileReadyEvent(readyEvent);
+        } catch (MetadataSaveException e) {
+            minioService.deleteFile(e.getObjectName());
+            handleFailure(event, e);
+        } catch (Exception e) {
+            handleFailure(event, e);
+        }
+    }
 
-        byte[] file = downloadFileService.downloadFileById(event.getTelegramFileId());
-        String objectName = minioService.uploadFile(file, event.getFileName(), event.getMimeType());
-        FileMetadata metadata = metadataService.saveMetadata(
+    private String storeFileAndGetObjectName(InputStream is, FileUploadEvent event) {
+        return minioService.uploadFile(
+                is,
+                event.getFileSize(),
+                event.getFileName(),
+                event.getMimeType()
+        );
+    }
+
+    private FileMetadata saveFileMetadata(FileUploadEvent event, String objectName) {
+        return metadataService.saveMetadata(
                 event.getTelegramUserId(),
                 event.getFileName(),
                 event.getMimeType(),
@@ -36,9 +59,10 @@ public class FileProcessingService {
                 objectName,
                 Duration.ofDays(minioProperties.getDefaultTtlDays())
         );
+    }
 
-        String downloadLink = linkGenerator.generateLink(metadata.getUuid());
-        FileReadyEvent readyEvent = new FileReadyEvent(event.getTelegramUserId(), downloadLink);
-        producerService.produceFileReadyEvent(readyEvent);
+    private void handleFailure(FileUploadEvent event, Exception e) {
+        var failedEvent = new FileUploadFailedEvent(event.getTelegramUserId(), event.getFileName());
+        producerService.produceFileUploadFailedEvent(failedEvent);
     }
 }
