@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
+import java.io.InputStream;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -24,7 +26,7 @@ public class TelegramDownloadFileService {
             maxAttempts = 3,
             backoff = @Backoff(delay = 2000)
     )
-    public byte[] downloadFileById(String telegramFileId) {
+    public InputStream downloadFileById(String telegramFileId) {
         String filePath = fetchFilePath(telegramFileId);
         String storageUrl = props.getFileStorageUrl()
                 .replace("{token}", props.getBotToken())
@@ -32,8 +34,7 @@ public class TelegramDownloadFileService {
 
         return restClient.get()
                 .uri(storageUrl)
-                .retrieve()
-                .body(byte[].class);
+                .exchange((request, response) -> response.getBody());
     }
 
     private String fetchFilePath(String fileId) {
@@ -57,7 +58,7 @@ public class TelegramDownloadFileService {
     }
 
     @Recover
-    public byte[] recover(RestClientException e, String fileId) {
+    public InputStream recover(RestClientException e, String fileId) {
         log.error("Failed to download Telegram file after retries, fileId={}", fileId, e);
         throw new DownloadFileException("Failed to download file from Telegram after retries", e);
     }
