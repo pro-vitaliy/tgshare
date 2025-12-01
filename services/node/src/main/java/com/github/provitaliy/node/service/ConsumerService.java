@@ -5,6 +5,7 @@ import com.github.provitaliy.common.dto.telegram.TelegramPhotoMessageDto;
 import com.github.provitaliy.common.dto.telegram.TelegramTextMessageDto;
 import com.github.provitaliy.common.event.EmailAlreadyTakenEvent;
 import com.github.provitaliy.common.event.FileReadyEvent;
+import com.github.provitaliy.common.event.FileUploadFailedEvent;
 import com.github.provitaliy.common.event.UserActivatedEvent;
 import com.github.provitaliy.common.messaging.QueueNames;
 import com.github.provitaliy.node.aspect.TelegramMessageListener;
@@ -57,6 +58,11 @@ public class ConsumerService {
 
     @RabbitListener(queues = QueueNames.EMAIL_ALREADY_TAKEN_QUEUE)
     public void consumeEmailAlreadyTakenEvent(EmailAlreadyTakenEvent event) {
+        userDomainEventHandler.handle(event);
+    }
+
+    @RabbitListener(queues = QueueNames.FiLE_UPLOAD_FAILED_QUEUE)
+    public void consumeFileUploadFailedEvent(FileUploadFailedEvent event) {
         userDomainEventHandler.handle(event);
     }
 }
