@@ -59,6 +59,11 @@ public class RabbitConfig {
         return new Queue(QueueNames.EMAIL_ALREADY_TAKEN_QUEUE);
     }
 
+    @Bean
+    public Queue fileUploadFailedQueue() {
+        return new Queue(QueueNames.FiLE_UPLOAD_FAILED_QUEUE);
+    }
+
 //    --------------- Exchanges ----------------
 
     @Bean
@@ -114,5 +119,13 @@ public class RabbitConfig {
                 .bind(emailAlreadyTakenQueue())
                 .to(mainExchange())
                 .with(RoutingKeys.ROUTING_KEY_EMAIL_ALREADY_TAKEN);
+    }
+
+    @Bean
+    public Binding fileUploadFailedBinding() {
+        return BindingBuilder
+                .bind(fileUploadFailedQueue())
+                .to(mainExchange())
+                .with(RoutingKeys.ROUTING_KEY_FILE_UPLOAD_FAILED);
     }
 }
