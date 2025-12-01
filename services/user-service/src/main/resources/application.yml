@@ -23,5 +23,5 @@ salt: ${SALT:test}
 
 service:
   user-activation:
-    url: ${USER_SERVICE_URL:http://localhost:8087}
+    url: ${USER_SERVICE_PUBLIC_URL:http://localhost:8087}
     endpoint: /user/activateUser
