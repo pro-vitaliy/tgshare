@@ -3,7 +3,7 @@ server:
 
 user-service:
   host: ${USER_SERVICE_HOST:localhost}
-  port: ${USER_SERVICE_PORT:9090}
+  port: ${USER_SERVICE_GRPC_PORT:9090}
 
 spring:
   data:
