@@ -7,7 +7,7 @@ server:
 
 spring:
   datasource:
-    url: ${USER_SERVICE_DB_URL:jdbc:postgresql://localhost:5432/userservicedb}
+    url: jdbc:postgresql://${USER_SERVICE_DB_HOST:localhost}:5432/${USER_SERVICE_DB_NAME:userservicedb}
     username: ${USER_SERVICE_DB_USERNAME}
     password: ${USER_SERVICE_DB_PASSWORD}
   jpa:
