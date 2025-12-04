@@ -42,16 +42,16 @@ public class MinioStorageService {
         }
     }
 
-    public byte[] downloadFile(String fileName) {
-        try (InputStream is = minioClient.getObject(
-                GetObjectArgs.builder()
-                        .bucket(props.getBucket())
-                        .object(fileName)
-                        .build()
-        )) {
-            return is.readAllBytes();
+    public InputStream getFileStream(String objectName) {
+        try {
+            return minioClient.getObject(
+                    GetObjectArgs.builder()
+                            .bucket(props.getBucket())
+                            .object(objectName)
+                            .build()
+            );
         } catch (Exception e) {
-            log.error("Ошибка при скачивании файла '{}' из MinIO", fileName, e);
+            log.error("Ошибка при скачивании файла '{}' из MinIO", objectName, e);
             throw new MinioStorageException("Не удалось скачать файл из MinIO", e);
         }
     }
