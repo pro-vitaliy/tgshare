@@ -37,6 +37,7 @@ public class FileMetadataService {
             Instant uploadedAt = Instant.now();
             Instant expiresAt = uploadedAt.plus(ttl);
             FileMetadata metadata = FileMetadata.builder()
+                    .uuid(uuid)
                     .ownerId(ownerId)
                     .fileName(fileName)
                     .mimeType(mimeType)
