@@ -11,9 +11,8 @@ public class FileLinkGenerator {
 
     public String generateLink(String uuid) {
         return String.format(
-                "http://%s:%d%s%s",
-                props.getHost(),
-                props.getPort(),
+                "%s%s%s",
+                props.getUrl(),
                 props.getDownloadEndpoint(),
                 uuid
         );
