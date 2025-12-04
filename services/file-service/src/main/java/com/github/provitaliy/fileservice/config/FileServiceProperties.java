@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "file-service")
 @Component
 public class FileServiceProperties {
+    private String url;
     private String host;
     private Integer port;
     private String downloadEndpoint;
