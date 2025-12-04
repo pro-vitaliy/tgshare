@@ -6,7 +6,7 @@ spring:
   application:
     name: file-service
   datasource:
-    url: jdbc:postgresql://${FILE_SERVICE_DB_HOST:localhost}:5433/${FILE_SERVICE_DB_NAME:fileservicedb}
+    url: jdbc:postgresql://${FILE_SERVICE_DB_HOST:localhost}:5432/${FILE_SERVICE_DB_NAME:fileservicedb}
     username: ${FILE_SERVICE_DB_USERNAME}
     password: ${FILE_SERVICE_DB_PASSWORD}
   rabbitmq:
@@ -32,6 +32,7 @@ telegram:
   file-storage-url: ${TG_BOT_FILE_STORAGE_URL:https://api.telegram.org/file/bot{token}/{filePath}}
 
 file-service:
+  url: ${FILE_SERVICE_PUBLIC_URL:http://localhost:${server.port}}
   host: ${FILE_SERVICE_HOST:localhost}
   port: ${FILE_SERVICE_PORT:${server.port}}
   download-endpoint: /api/files/
