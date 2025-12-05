@@ -1,0 +1,198 @@
+services:
+  rabbitmq:
+    image: rabbitmq:4.1.0-management
+    container_name: tgshare-rabbitmq
+    ports:
+        - "5672:5672"       # RabbitMQ main port
+        - "15672:15672"     # RabbitMQ management UI port
+    environment:
+        RABBITMQ_DEFAULT_USER: ${RABBIT_USERNAME}
+        RABBITMQ_DEFAULT_PASS: ${RABBIT_PASSWORD}
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  user-postgres:
+    image: postgres:16
+    container_name: user-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${USER_SERVICE_DB_USERNAME}
+      POSTGRES_PASSWORD: ${USER_SERVICE_DB_PASSWORD}
+      POSTGRES_DB: ${USER_SERVICE_DB_NAME}
+#    volumes:
+#        - user-service-data:/var/lib/postgresql/data
+
+  file-postgres:
+    image: postgres:16
+    container_name: file-postgres
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: ${FILE_SERVICE_DB_USERNAME}
+      POSTGRES_PASSWORD: ${FILE_SERVICE_DB_PASSWORD}
+      POSTGRES_DB: ${FILE_SERVICE_DB_NAME}
+#    volumes:
+#        - file-service-data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:latest
+    container_name: tgshare-redis
+    ports:
+      - "6379:6379"
+
+  minio:
+    image: minio/minio:latest
+    container_name: tgshare-minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+#    volumes:
+#      - minio-data:/data
+
+  minio-create-bucket:
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      until mc alias set myminio ${MINIO_URL} ${MINIO_ACCESS_KEY} ${MINIO_SECRET_KEY}; do
+        echo 'Waiting for MinIO...';
+        sleep 2;
+      done;
+      mc mb -p myminio/${MINIO_BUCKET_NAME} || echo 'Bucket already exists';
+      "
+
+  dispatcher:
+    build:
+      context: ./services/dispatcher
+      dockerfile: Dockerfile
+    container_name: tgshare-dispatcher
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "8084:8084"
+    environment:
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      TELEGRAM_BOT_URL: ${TELEGRAM_BOT_URL}
+      RABBIT_HOST: rabbitmq
+      RABBIT_PORT: 5672
+      RABBIT_USERNAME: ${RABBIT_USERNAME}
+      RABBIT_PASSWORD: ${RABBIT_PASSWORD}
+
+  node:
+    build:
+      context: ./services/node
+      dockerfile: Dockerfile
+    container_name: node-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    environment:
+      RABBIT_HOST: rabbitmq
+      RABBIT_PORT: 5672
+      RABBIT_USERNAME: ${RABBIT_USERNAME}
+      RABBIT_PASSWORD: ${RABBIT_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      NODE_PORT: 8085
+      USER_SERVICE_HOST: user-service
+      USER_SERVICE_GRPC_PORT: 9090
+
+  user-service:
+    build:
+      context: ./services/user-service
+      dockerfile: Dockerfile
+    container_name: user-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      user-postgres:
+        condition: service_started
+    ports:
+      - "8087:8087"
+    environment:
+      RABBIT_HOST: rabbitmq
+      RABBIT_PORT: 5672
+      RABBIT_USERNAME: ${RABBIT_USERNAME}
+      RABBIT_PASSWORD: ${RABBIT_PASSWORD}
+      USER_SERVICE_DB_HOST: user-postgres
+      USER_SERVICE_DB_NAME: ${USER_SERVICE_DB_NAME}
+      USER_SERVICE_DB_USERNAME: ${USER_SERVICE_DB_USERNAME}
+      USER_SERVICE_DB_PASSWORD: ${USER_SERVICE_DB_PASSWORD}
+      SALT: ${SALT}
+      USER_SERVICE_PUBLIC_URL: http://localhost:8087
+
+  file-service:
+    build:
+      context: ./services/file-service
+      dockerfile: Dockerfile
+    container_name: file-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      file-postgres:
+        condition: service_started
+      minio:
+        condition: service_healthy
+      minio-create-bucket:
+        condition: service_completed_successfully
+    ports:
+      - "8086:8086"
+    environment:
+      FILE_SERVICE_DB_HOST: file-postgres
+      FILE_SERVICE_DB_NAME: ${FILE_SERVICE_DB_NAME}
+      FILE_SERVICE_DB_USERNAME: ${FILE_SERVICE_DB_USERNAME}
+      FILE_SERVICE_DB_PASSWORD: ${FILE_SERVICE_DB_PASSWORD}
+      RABBIT_HOST: rabbitmq
+      RABBIT_PORT: 5672
+      RABBIT_USERNAME: ${RABBIT_USERNAME}
+      RABBIT_PASSWORD: ${RABBIT_PASSWORD}
+      MINIO_URL: http://minio:9000
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
+      MINIO_BUCKET_NAME: ${MINIO_BUCKET_NAME}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      TG_BOT_FILE_INFO_URL: ${TG_BOT_FILE_INFO_URL}
+      TG_BOT_FILE_STORAGE_URL: ${TG_BOT_FILE_STORAGE_URL}
+      FILE_SERVICE_PUBLIC_URL: http://localhost:8086
+
+  notification-service:
+    build:
+      context: ./services/notification-service
+      dockerfile: Dockerfile
+    container_name: notification-service
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      RABBIT_HOST: rabbitmq
+      RABBIT_PORT: 5672
+      RABBIT_USERNAME: ${RABBIT_USERNAME}
+      RABBIT_PASSWORD: ${RABBIT_PASSWORD}
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_PORT: ${MAIL_PORT}
+      MAIL_PROTOCOL: ${MAIL_PROTOCOL}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+
+#volumes:
+#  user-service-data:
+#  file-service-data:
+#  minio-data:
