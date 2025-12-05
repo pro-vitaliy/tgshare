@@ -24,20 +24,18 @@ public class UpdateController {
     private final TelegramMessageMapper messageMapper;
 
     public void processUpdate(Update update) {
-        if (update == null) {
-            log.error("Received update is null");
+        if (update == null || !update.hasMessage()) {
+            log.error("Unsupported update type {}", update);
             return;
         }
-
-        if (update.hasMessage()) {
-            distributeMessagesByType(update);
-        } else {
-            log.error("Unsupported update type {}", update);
-            setUnsupportedTypeView(update);
-        }
+        distributeMessagesByType(update);
     }
 
-    public void setView(SendMessage sendMessage) {
+    public void setView(SendMessageDto sendMessageDto) {
+        setView(messageMapper.toSendMessage(sendMessageDto));
+    }
+
+    private void setView(SendMessage sendMessage) {
         try {
             telegramClient.execute(sendMessage);
         } catch (TelegramApiException e) {
@@ -45,10 +43,6 @@ public class UpdateController {
         } catch (Exception e) {
             log.error("Unexpected error sending message: {}", sendMessage, e);
         }
-    }
-
-    public void setView(SendMessageDto sendMessageDto) {
-        setView(messageMapper.toSendMessage(sendMessageDto));
     }
 
     private void distributeMessagesByType(Update update) {
@@ -64,12 +58,8 @@ public class UpdateController {
             TelegramPhotoMessageDto photoMessageDto = messageMapper.toPhotoMessageDto(message);
             updateProducer.producePhotoMessageUpdate(photoMessageDto);
         } else {
-            setUnsupportedTypeView(update);
+            var sendMessage = MessageUtils.generateUnsupportedTypeSendMessage(update);
+            setView(sendMessage);
         }
-    }
-
-    private void setUnsupportedTypeView(Update update) {
-        var sendMessage = MessageUtils.generateSendMessageWithText(update, "Неподдерживаемый тип сообщения");
-        setView(sendMessage);
     }
 }
