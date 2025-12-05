@@ -6,6 +6,10 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 @UtilityClass
 public class MessageUtils {
+    public static final String UNSUPPORTED_MESSAGE_TYPE_RESPONSE = """
+            Неподдерживаемый тип сообщения. Ты можешь отправлять текстовые сообщения,
+            документы или фотографии. Для получения помощи отправь команду /help.
+           """;
 
     public static SendMessage generateSendMessageWithText(Update update, String text) {
         var message = update.getMessage();
@@ -14,5 +18,9 @@ public class MessageUtils {
                 .chatId(chatId)
                 .text(text)
                 .build();
+    }
+
+    public static SendMessage generateUnsupportedTypeSendMessage(Update update) {
+        return generateSendMessageWithText(update, UNSUPPORTED_MESSAGE_TYPE_RESPONSE);
     }
 }
