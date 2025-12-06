@@ -26,20 +26,30 @@ public class MailSenderService {
             backoff = @Backoff(delay = 2000)
     )
     public void send(String mailTo, String subject, String body) {
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setFrom(mailFrom);
-        mailMessage.setTo(mailTo);
-        mailMessage.setSubject(subject);
-        mailMessage.setText(body);
-        log.debug("Sending mail to → {}, subject → {}", mailTo, mailMessage.getSubject());
-        mailSender.send(mailMessage);
-        log.debug("Mail sent to → {}", mailTo);
+        try {
+            if (mailTo == null) {
+                log.warn("Mail 'to' address is null, skipping sending mail with subject → {}", subject);
+                return;
+            }
+            SimpleMailMessage mailMessage = new SimpleMailMessage();
+            mailMessage.setFrom(mailFrom);
+            mailMessage.setTo(mailTo);
+            mailMessage.setSubject(subject);
+            mailMessage.setText(body);
+            log.debug("Sending mail to → {}, subject → {}", mailTo, mailMessage.getSubject());
+            mailSender.send(mailMessage);
+            log.debug("Mail sent to → {}", mailTo);
+        } catch (MailException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Unexpected error while sending mail to → {}: {}", mailTo, e.getMessage());
+        }
     }
 
     @Recover
     public void recover(MailException e, String mailTo, String subject, String body) {
         log.error("""
-        Не удалось отправить письмо:
+        Failed to send mail after retries.:
         → To: {}
         → Reason: {}
         """, mailTo, e.getMessage());
