@@ -17,11 +17,6 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitConfig {
 
     @Bean
-    public MessageConverter jsonMessageConverter() {
-        return new Jackson2JsonMessageConverter();
-    }
-
-    @Bean
     public Queue userEmailEnteredQueue() {
         return QueueBuilder.durable(QueueNames.USER_EMAIL_ENTERED_QUEUE)
                 .withArgument("x-dead-letter-exchange", ExchangeNames.DLQ)
