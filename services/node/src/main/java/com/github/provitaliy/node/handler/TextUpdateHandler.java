@@ -79,6 +79,7 @@ public class TextUpdateHandler {
             return BotResponse.INCORRECT_EMAIL_ANSWER;
         }
         userService.setEmail(nodeUser, HandlerUtils.normalizeEmail(email));
+        userService.changeState(nodeUser, BASIC_STATE);
         return BotResponse.EMAIL_CONFIRMATION_RESPONSE;
     }
 }
