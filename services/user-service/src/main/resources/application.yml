@@ -19,7 +19,7 @@ spring:
     username: ${RABBIT_USERNAME}
     password: ${RABBIT_PASSWORD}
 
-salt: ${SALT:test}
+salt: ${SALT}
 
 service:
   user-activation:
