@@ -60,6 +60,7 @@ public class FileUpdateHandler {
                 .fileName("photo_" + photoMessage.photoId() + ".jpg")
                 .fileSize(photoMessage.photoSize())
                 .telegramUserId(user.getTelegramUserId())
+                .mimeType("image/jpeg")
                 .build();
 
         processUpload(fileUploadEvent, user);
