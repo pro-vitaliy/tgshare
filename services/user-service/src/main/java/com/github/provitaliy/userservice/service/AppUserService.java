@@ -64,6 +64,7 @@ public class AppUserService {
         user.setEmail(user.getUnconfirmedEmail());
         user.setUnconfirmedEmail(null);
         user.setIsActive(true);
+        appUserRepository.save(user);
         var event = new UserActivatedEvent(user.getTelegramUserId(), user.getEmail());
         producerService.produceUserActivatedEvent(event);
     }
