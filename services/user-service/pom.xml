@@ -30,6 +30,9 @@
 		<java.version>24</java.version>
         <org.mapstruct.version>1.6.3</org.mapstruct.version>
         <net.devh.grpc.spring-boot.version>3.1.0.RELEASE</net.devh.grpc.spring-boot.version>
+        <org.mockito.version>5.18.0</org.mockito.version>
+        <com.h2database.version>2.4.240</com.h2database.version>
+        <net.datafaker.version>2.5.2</net.datafaker.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -73,20 +76,32 @@
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
+        <dependency>
+            <groupId>org.hashids</groupId>
+            <artifactId>hashids</artifactId>
+            <version>1.0.3</version>
+        </dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${com.h2database.version}</version>
+            <scope>test</scope>
+        </dependency>
 		<dependency>
 			<groupId>org.springframework.amqp</groupId>
 			<artifactId>spring-rabbit-test</artifactId>
 			<scope>test</scope>
 		</dependency>
         <dependency>
-            <groupId>org.hashids</groupId>
-            <artifactId>hashids</artifactId>
-            <version>1.0.3</version>
+            <groupId>net.datafaker</groupId>
+            <artifactId>datafaker</artifactId>
+            <version>${net.datafaker.version}</version>
+            <scope>test</scope>
         </dependency>
 	</dependencies>
 	<build>
