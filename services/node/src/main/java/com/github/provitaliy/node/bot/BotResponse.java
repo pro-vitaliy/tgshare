@@ -18,8 +18,8 @@ public class BotResponse {
     public static final String WAIT_FOR_EMAIL_RESPONSE = "Введите ваш email";
     public static final String ALREADY_REGISTERED_RESPONSE = "Вы уже зарегистрированы!";
     public static final String EMAIL_CONFIRMATION_RESPONSE = "Пройдите по ссылке в письме для завершения регистрации";
-    public static final String INCORRECT_EMAIL_ANSWER = "Введен некорректный email. Попробуйте еще раз или "
-                                                        + "введите %s для отмены.".formatted(ServiceCommand.CANCEL);
+    public static final String INCORRECT_EMAIL_RESPONSE = "Введен некорректный email. Попробуйте еще раз или "
+                                                          + "введите %s для отмены.".formatted(ServiceCommand.CANCEL);
     public static final String NOT_ALLOW_TO_SEND_FILE_RESPONSE = "Зарегистрируйтесь для отправки контента с"
                                                                  + " помощью команды " + ServiceCommand.REGISTRATION;
     public static final String FILE_RECEIVED_RESPONSE = "Файл получен. Ссылка для скачивания скоро будет готова.";
