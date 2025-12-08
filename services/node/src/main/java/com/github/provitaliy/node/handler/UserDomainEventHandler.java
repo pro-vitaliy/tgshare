@@ -4,6 +4,7 @@ import com.github.provitaliy.common.event.EmailAlreadyTakenEvent;
 import com.github.provitaliy.common.event.FileReadyEvent;
 import com.github.provitaliy.common.event.FileUploadFailedEvent;
 import com.github.provitaliy.common.event.UserActivatedEvent;
+import com.github.provitaliy.node.bot.BotResponse;
 import com.github.provitaliy.node.service.NodeUserCacheService;
 import com.github.provitaliy.node.service.NodeUserService;
 import com.github.provitaliy.node.service.UserResponseService;
@@ -24,25 +25,24 @@ public class UserDomainEventHandler {
         nodeUser.setEmail(activatedEvent.email());
         cacheService.save(nodeUser);
 
-        String messageText = "Ваш email успешно подтвержден, учетная запись активирована!";
-        userResponseService.sendUserResponse(nodeUser.getChatId(), messageText);
+        userResponseService.sendUserResponse(nodeUser.getChatId(), BotResponse.USER_ACTIVATED_RESPONSE);
     }
 
     public void handle(FileReadyEvent fileReadyEvent) {
-        String messageText = "Файл успешно, загружен и доступен по ссылке: %s".formatted(fileReadyEvent.fileUrl());
+        String messageText = BotResponse.FILE_READY_RESPONSE.formatted(fileReadyEvent.fileUrl());
         NodeUser user = userService.getByTelegramUserId(fileReadyEvent.telegramUserId());
         userResponseService.sendUserResponse(user.getChatId(), messageText);
     }
 
     public void handle(EmailAlreadyTakenEvent event) {
         NodeUser user = userService.getByTelegramUserId(event.telegramUserId());
-        String messageText = "Email %s уже занят. Пожалуйста, используйте другой email.".formatted(event.email());
+        String messageText = BotResponse.EMAIL_ALREADY_EXIST.formatted(event.email());
         userResponseService.sendUserResponse(user.getChatId(), messageText);
     }
 
     public void handle(FileUploadFailedEvent event) {
         NodeUser user = userService.getByTelegramUserId(event.telegramUserId());
-        String messageText = "Не удалось загрузить файл %s. Пожалуйста, попробуйте еще раз.".formatted(event.fileName());
+        String messageText = BotResponse.FILE_UPLOAD_FAILURE_RESPONSE.formatted(event.fileName());
         userResponseService.sendUserResponse(user.getChatId(), messageText);
     }
 }
