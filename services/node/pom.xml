@@ -32,6 +32,9 @@
         <org.mapstruct.version>1.6.3</org.mapstruct.version>
         <org.springframework.retry.version>2.0.12</org.springframework.retry.version>
         <org.springframework.aspects.version>7.0.1</org.springframework.aspects.version>
+        <net.datafaker.version>2.5.2</net.datafaker.version>
+        <commons.validator.version>1.9.0</commons.validator.version>
+        <io.grpc.version>1.76.0</io.grpc.version>
     </properties>
     <dependencies>
         <dependency>
@@ -57,20 +60,24 @@
             <version>${org.springframework.aspects.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-netty-shaded</artifactId>
-            <version>1.76.0</version>
+            <version>${io.grpc.version}</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-protobuf</artifactId>
-            <version>1.76.0</version>
+            <version>${io.grpc.version}</version>
         </dependency>
         <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-stub</artifactId>
-            <version>1.76.0</version>
+            <version>${io.grpc.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mapstruct</groupId>
@@ -80,7 +87,7 @@
         <dependency>
             <groupId>commons-validator</groupId>
             <artifactId>commons-validator</artifactId>
-            <version>1.9.0</version>
+            <version>${commons.validator.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.provitaliy</groupId>
@@ -98,24 +105,14 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-testcontainers</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.amqp</groupId>
             <artifactId>spring-rabbit-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>rabbitmq</artifactId>
-            <scope>test</scope>
+            <groupId>net.datafaker</groupId>
+            <artifactId>datafaker</artifactId>
+            <version>${net.datafaker.version}</version>
         </dependency>
     </dependencies>
 
