@@ -5,7 +5,6 @@ import com.github.provitaliy.node.bot.BotResponse;
 import com.github.provitaliy.node.bot.ServiceCommand;
 import com.github.provitaliy.node.exception.NodeInternalProcessingException;
 import com.github.provitaliy.node.service.NodeUserService;
-import com.github.provitaliy.node.service.ProducerService;
 import com.github.provitaliy.node.service.UserResponseService;
 import com.github.provitaliy.node.user.NodeUser;
 import com.github.provitaliy.node.user.UserState;
@@ -22,7 +21,6 @@ import static com.github.provitaliy.node.user.UserState.WAIT_FOR_EMAIL_STATE;
 @Service
 public class TextUpdateHandler {
     private final NodeUserService userService;
-    private final ProducerService producerService;
     private final UserResponseService userResponseService;
 
     public void handleUpdate(TelegramTextMessageDto textMessage) {
@@ -76,7 +74,7 @@ public class TextUpdateHandler {
 
     private String setEmail(NodeUser nodeUser, String email) {
         if (!HandlerUtils.isValidEmail(email)) {
-            return BotResponse.INCORRECT_EMAIL_ANSWER;
+            return BotResponse.INCORRECT_EMAIL_RESPONSE;
         }
         userService.setEmail(nodeUser, HandlerUtils.normalizeEmail(email));
         userService.changeState(nodeUser, BASIC_STATE);
