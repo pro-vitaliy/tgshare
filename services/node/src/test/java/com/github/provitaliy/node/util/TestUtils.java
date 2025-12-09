@@ -1,9 +1,11 @@
 package com.github.provitaliy.node.util;
 
+import com.github.provitaliy.common.dto.AppUserCreateDTO;
 import com.github.provitaliy.common.dto.telegram.TelegramDocumentMessageDto;
 import com.github.provitaliy.common.dto.telegram.TelegramPhotoMessageDto;
 import com.github.provitaliy.common.dto.telegram.TelegramTextMessageDto;
 import com.github.provitaliy.common.dto.telegram.TelegramUserDto;
+import com.github.provitaliy.common.grpc.AppUserResponse;
 import com.github.provitaliy.node.user.NodeUser;
 import com.github.provitaliy.node.user.UserState;
 import lombok.experimental.UtilityClass;
@@ -61,5 +63,27 @@ public class TestUtils {
                 user.getLastName(),
                 user.getUsername()
         );
+    }
+
+    public static AppUserCreateDTO getAppUserCreateDto(NodeUser nodeUser) {
+        return AppUserCreateDTO.builder()
+                .telegramUserId(nodeUser.getTelegramUserId())
+                .chatId(nodeUser.getChatId())
+                .firstName(nodeUser.getFirstName())
+                .lastName(nodeUser.getLastName())
+                .username(nodeUser.getUsername())
+                .build();
+    }
+
+    public static AppUserResponse getAppUserResponse(NodeUser nodeUser) {
+        return AppUserResponse.newBuilder()
+                .setTelegramUserId(nodeUser.getTelegramUserId())
+                .setChatId(nodeUser.getChatId())
+                .setFirstName(nodeUser.getFirstName() == null ? "" : nodeUser.getFirstName())
+                .setLastName(nodeUser.getLastName() == null ? "" : nodeUser.getLastName())
+                .setUsername(nodeUser.getUsername() == null ? "" : nodeUser.getUsername())
+                .setEmail(nodeUser.getEmail() == null ? "" : nodeUser.getEmail())
+                .setIsActive(nodeUser.getIsActive())
+                .build();
     }
 }
