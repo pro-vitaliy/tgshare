@@ -55,13 +55,8 @@ public class FileMetadataService {
         }
     }
 
-    public void deleteMetadata(Long id) {
-        if (!repository.existsById(id)) {
-            log.warn("No metadata found with id={} for deletion", id);
-            return;
-        }
-        repository.deleteById(id);
-        log.info("Metadata with id={} deleted", id);
+    public void deleteMetadata(String objectName) {
+        repository.deleteByObjectName(objectName);
+        log.info("Metadata with objectName={} deleted", objectName);
     }
-
 }
