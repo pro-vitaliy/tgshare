@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface FileMetadataRepository extends JpaRepository<FileMetadata , Long> {
     Optional<FileMetadata> findByUuid(String uuid);
+    void deleteByObjectName(String objectName);
 }
