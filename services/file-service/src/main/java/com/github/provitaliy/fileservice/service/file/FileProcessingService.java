@@ -5,15 +5,16 @@ import com.github.provitaliy.common.event.FileUploadEvent;
 import com.github.provitaliy.common.event.FileUploadFailedEvent;
 import com.github.provitaliy.fileservice.config.MinioProperties;
 import com.github.provitaliy.fileservice.entity.FileMetadata;
-import com.github.provitaliy.fileservice.exception.MetadataSaveException;
 import com.github.provitaliy.fileservice.service.event.ProducerService;
 import com.github.provitaliy.fileservice.util.FileLinkGenerator;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
 import java.time.Duration;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class FileProcessingService {
@@ -25,18 +26,37 @@ public class FileProcessingService {
     private final ProducerService producerService;
 
     public void handleFileUpload(FileUploadEvent event) {
+        String objectName = null;
         try (InputStream is = downloadFileService.downloadFileById(event.getTelegramFileId())) {
-            String objectName = storeFileAndGetObjectName(is, event);
+            objectName = storeFileAndGetObjectName(is, event);
             FileMetadata metadata = saveFileMetadata(event, objectName);
             String downloadLink = linkGenerator.generateLink(metadata.getUuid());
 
             FileReadyEvent readyEvent = new FileReadyEvent(event.getTelegramUserId(), downloadLink);
             producerService.produceFileReadyEvent(readyEvent);
-        } catch (MetadataSaveException e) {
-            minioService.deleteFile(e.getObjectName());
-            handleFailure(event, e);
         } catch (Exception e) {
+            rollback(objectName);
             handleFailure(event, e);
+            log.error("Error processing file upload: telegramFileId={}, telegramUserId={}",
+                    event.getTelegramFileId(), event.getTelegramUserId(), e);
+        }
+    }
+
+    private void rollback(String objectName) {
+        if (objectName == null) {
+            return;
+        }
+
+        try {
+            minioService.deleteFile(objectName);
+        } catch (Exception e) {
+            log.error("Rollback: failed to delete file from MinIO, objectName={}", objectName, e);
+        }
+
+        try {
+            metadataService.deleteMetadata(objectName);
+        } catch (Exception e) {
+            log.error("Rollback: failed to delete metadata, objectName={}", objectName, e);
         }
     }
 
