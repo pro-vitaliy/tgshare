@@ -30,6 +30,7 @@
 		<java.version>24</java.version>
         <io.minio.version>8.6.0</io.minio.version>
         <org.apache.httpcomponents.version>4.5.14</org.apache.httpcomponents.version>
+        <net.datafaker.version>2.5.2</net.datafaker.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -84,6 +85,12 @@
 			<artifactId>spring-rabbit-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+        <dependency>
+            <groupId>net.datafaker</groupId>
+            <artifactId>datafaker</artifactId>
+            <version>${net.datafaker.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 	<build>
