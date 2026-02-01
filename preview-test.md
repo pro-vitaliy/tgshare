@@ -1,6 +1,5 @@
-<pre>
-  
-graph TD
+```mermaid
+  graph TD
     subgraph Telegram
         TG[Telegram API]
     end
@@ -54,4 +53,4 @@ graph TD
     Node -- Final UI Message --> Rabbit
     Rabbit -- Outbound --> Disp
     Disp -- API Response --> TG
-</pre>
+```
