@@ -30,6 +30,7 @@
 ## Высокоуровневая схема
 
 ```mermaid
+%%{init: {'look': 'handDrawn'}}%%
 graph TD
     subgraph Telegram
         TG[Telegram API]
