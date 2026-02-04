@@ -1,0 +1,70 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001
+      author: vitaliy
+      changes:
+        - createTable:
+            tableName: app_users
+            columns:
+
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+
+              - column:
+                  name: telegram_user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: chat_id
+                  type: bigint
+
+              - column:
+                  name: first_name
+                  type: varchar(255)
+
+              - column:
+                  name: last_name
+                  type: varchar(255)
+
+              - column:
+                  name: username
+                  type: varchar(255)
+
+              - column:
+                  name: email
+                  type: varchar(255)
+
+              - column:
+                  name: unconfirmed_email
+                  type: varchar(255)
+
+              - column:
+                  name: is_active
+                  type: boolean
+
+              - column:
+                  name: first_login_date
+                  type: timestamp
+                  constraints:
+                    nullable: false
+
+        - addUniqueConstraint:
+            tableName: app_users
+            columnNames: telegram_user_id
+            constraintName: uq_app_users_telegram_user_id
+
+        - addUniqueConstraint:
+            tableName: app_users
+            columnNames: email
+            constraintName: uq_app_users_email
+
+
+
+
