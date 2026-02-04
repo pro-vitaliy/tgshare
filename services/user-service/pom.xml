@@ -48,6 +48,10 @@
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
         <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>
+        <dependency>
             <groupId>net.devh</groupId>
             <artifactId>grpc-server-spring-boot-starter</artifactId>
             <version>${net.devh.grpc.spring-boot.version}</version>
