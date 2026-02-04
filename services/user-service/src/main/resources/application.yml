@@ -12,12 +12,15 @@ spring:
     password: ${USER_SERVICE_DB_PASSWORD}
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
   rabbitmq:
     host: ${RABBIT_HOST:localhost}
     port: ${RABBIT_PORT:5672}
     username: ${RABBIT_USERNAME}
     password: ${RABBIT_PASSWORD}
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yml
 
 salt: ${SALT}
 
