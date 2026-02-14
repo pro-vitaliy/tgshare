@@ -20,7 +20,6 @@ public class TelegramWebhookService {
 
     private final RestClient restClient;
 
-
     public void setWebhook() {
         String url = "https://api.telegram.org/bot{token}/setWebhook?url={webhook}";
         log.info("Установка Telegram вебхука на адрес: {}", botUrl);
@@ -34,7 +33,6 @@ public class TelegramWebhookService {
             log.info("Вебхук Telegram успешно установлен.");
 
         } catch (RestClientException e) {
-            log.error("Ошибка при установке Telegram вебхука: {}", e.getMessage(), e);
             throw new IllegalStateException("Ошибка при установке вебхука: " + e.getMessage(), e);
         }
     }
