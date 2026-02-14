@@ -1,5 +1,6 @@
 package com.github.provitaliy.dispatcher.controller;
 
+import com.github.provitaliy.dispatcher.service.UpdateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,10 +11,10 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @RestController
 public class WebhookController {
 
-    private final UpdateController updateController;
+    private final UpdateService updateService;
 
     @PostMapping("/")
     public void onUpdatesReceived(@RequestBody Update update) {
-        updateController.processUpdate(update);
+        updateService.processUpdate(update);
     }
 }

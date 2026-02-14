@@ -1,10 +1,9 @@
-package com.github.provitaliy.dispatcher.controller;
+package com.github.provitaliy.dispatcher.service;
 
 import com.github.provitaliy.common.dto.telegram.TelegramDocumentMessageDto;
 import com.github.provitaliy.common.dto.telegram.TelegramPhotoMessageDto;
 import com.github.provitaliy.common.dto.telegram.TelegramTextMessageDto;
 import com.github.provitaliy.dispatcher.mapper.TelegramMessageMapper;
-import com.github.provitaliy.dispatcher.service.UpdateProducer;
 import com.github.provitaliy.dispatcher.util.TestDtoFactory;
 import com.github.provitaliy.dispatcher.util.TestUpdateFactory;
 import com.github.provitaliy.dispatcher.utils.MessageUtils;
@@ -25,7 +24,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class UpdateControllerTest {
+class UpdateServiceTest {
 
     @Mock
     private TelegramClient telegramClient;
@@ -37,7 +36,7 @@ class UpdateControllerTest {
     private TelegramMessageMapper messageMapper;
 
     @InjectMocks
-    private UpdateController updateController;
+    private UpdateService updateService;
 
     @Captor
     private ArgumentCaptor<TelegramTextMessageDto> textMessageDtoCaptor;
@@ -59,7 +58,7 @@ class UpdateControllerTest {
         when(messageMapper.toTextMessageDto(update.getMessage()))
                 .thenReturn(expectedDto);
 
-        updateController.processUpdate(update);
+        updateService.processUpdate(update);
         verify(updateProducer).produceTextMessageUpdate(textMessageDtoCaptor.capture());
         TelegramTextMessageDto capturedDto = textMessageDtoCaptor.getValue();
 
@@ -74,7 +73,7 @@ class UpdateControllerTest {
         when(messageMapper.toDocumentMessageDto(docUpdate.getMessage()))
                 .thenReturn(expectedDto);
 
-        updateController.processUpdate(docUpdate);
+        updateService.processUpdate(docUpdate);
         verify(updateProducer).produceDocMessageUpdate(docMessageDtoCaptor.capture());
         TelegramDocumentMessageDto docMessageToProduce = docMessageDtoCaptor.getValue();
 
@@ -89,7 +88,7 @@ class UpdateControllerTest {
         when(messageMapper.toPhotoMessageDto(photoUpdate.getMessage()))
                 .thenReturn(expectedDto);
 
-        updateController.processUpdate(photoUpdate);
+        updateService.processUpdate(photoUpdate);
         verify(updateProducer).producePhotoMessageUpdate(photoMessageDtoCaptor.capture());
         TelegramPhotoMessageDto photoMessageToProduce = photoMessageDtoCaptor.getValue();
 
@@ -101,7 +100,7 @@ class UpdateControllerTest {
         Update unsupportedUpdate = TestUpdateFactory.textUpdate(null);
         String expectedResponse = MessageUtils.UNSUPPORTED_MESSAGE_TYPE_RESPONSE;
 
-        updateController.processUpdate(unsupportedUpdate);
+        updateService.processUpdate(unsupportedUpdate);
         verify(telegramClient).execute(sendMessageCaptor.capture());
         SendMessage messageToSend = sendMessageCaptor.getValue();
 
@@ -110,7 +109,7 @@ class UpdateControllerTest {
 
     @Test
     void shouldIgnoreNullUpdate() {
-        updateController.processUpdate(null);
+        updateService.processUpdate(null);
         verifyNoInteractions(updateProducer, telegramClient);
     }
 }
