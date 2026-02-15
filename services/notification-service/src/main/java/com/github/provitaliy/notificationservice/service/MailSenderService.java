@@ -25,6 +25,7 @@ public class MailSenderService implements NotificationSenderService {
             maxAttempts = 3,
             backoff = @Backoff(delay = 2000)
     )
+    @Override
     public void send(String mailTo, String subject, String body) {
         try {
             if (mailTo == null) {
@@ -38,7 +39,7 @@ public class MailSenderService implements NotificationSenderService {
             mailMessage.setText(body);
             log.debug("Sending mail to → {}, subject → {}", mailTo, mailMessage.getSubject());
             mailSender.send(mailMessage);
-            log.debug("Mail sent to → {}", mailTo);
+            log.info("Mail sent successfully to → {}, subject → {}", mailTo, subject);
         } catch (MailException e) {
             throw e;
         } catch (Exception e) {
