@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class ConsumerService {
-    private final MailSenderService mailSenderService;
+    private final NotificationSenderService mailSenderService;
 
     @RabbitListener(queues = QueueNames.EMAIL_SEND_QUEUE)
     public void consumeEmailSendQueue(SendEmailEvent sendEmailEvent) {
